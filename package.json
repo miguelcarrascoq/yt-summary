@@ -9,16 +9,23 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^0.0.36",
+    "@ant-design/nextjs-registry": "^1.0.0",
+    "@diffusionstudio/vits-web": "^1.0.2",
+    "@google/generative-ai": "^0.15.0",
+    "ai": "^3.2.24",
+    "antd": "^5.19.2",
+    "next": "14.2.5",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.5"
+    "youtube-transcript": "^1.2.1"
   },
   "devDependencies": {
-    "typescript": "^5",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "eslint": "^8",
-    "eslint-config-next": "14.2.5"
+    "eslint-config-next": "14.2.5",
+    "typescript": "^5"
   }
 }

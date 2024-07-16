@@ -1,31 +1,25 @@
 'use client'
 
-import { Button } from 'antd';
+import { Button, Flex } from 'antd';
 import * as tts from '@diffusionstudio/vits-web';
-import { runGoogleAI } from './serverai';
+import { grabYT, runGoogleAI } from './services';
 
-import { TranscriptResponse, YoutubeTranscript } from 'youtube-transcript';
-import { useEffect, useState } from 'react';
+import { TranscriptResponse } from 'youtube-transcript';
+import { useState } from 'react';
 
 export default function Home() {
 
-  const [ytResponse, setYtResponse] = useState<TranscriptResponse[]>([]);
+  const [ytTranscript, setYtTrans] = useState<TranscriptResponse[]>([]);
+  const [mergedTranscript, setMergedTranscript] = useState<string>('');
+  const [summary, setSummary] = useState<string>('');
 
-  useEffect(() => {
-    async function fetchData() {
-      const res: TranscriptResponse[] = await YoutubeTranscript.fetchTranscript('https://www.youtube.com/watch?v=tdLs7nyQJtU');
-      console.log(res);
-      setYtResponse(res);
-    }
-    fetchData();
-  }, []);
-
-  const mergeTranscript = () => {
+  const mergeTranscript = (ytResponse: TranscriptResponse[]) => {
     let mergedTranscript = '';
     ytResponse.forEach((transcript) => {
       mergedTranscript += transcript.text + ' ';
     });
     console.log(mergedTranscript)
+    setMergedTranscript(mergedTranscript)
   }
 
   const playSound = async () => {
@@ -39,11 +33,29 @@ export default function Home() {
     audio.play();
   }
 
+  const callGrabYT = async () => {
+    const ytResponse = await grabYT('tdLs7nyQJtU');
+    console.log(ytResponse);
+    setYtTrans(ytResponse);
+  }
+
+  const callRunGoogleAI = async () => {
+    const result = await runGoogleAI(mergedTranscript);
+    console.log(result);
+    setSummary(result);
+  }
+
   return (
     <div>
-      <Button type="primary" onClick={playSound}>playSound</Button>
-      <Button type="primary" onClick={mergeTranscript}>mergeTranscript</Button>
-      <Button type="primary" onClick={runGoogleAI}>runGoogleAI</Button>
+      <Flex gap='small' >
+        <Button type="primary" onClick={playSound}>playSound</Button>
+
+        <Button type="primary" onClick={callGrabYT}>grabYT</Button>
+        <Button type="primary" onClick={() => mergeTranscript(ytTranscript)}>mergeTranscript</Button>
+        <Button type="primary" onClick={callRunGoogleAI}>runGoogleAI</Button>
+      </Flex >
+      <div>summary: {summary}</div>
     </div>
+
   );
 }

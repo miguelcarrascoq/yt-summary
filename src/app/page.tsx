@@ -1,7 +1,7 @@
 'use client'
 
 import { Button, Flex, Input, Select, Space, Image } from 'antd';
-import { grabYT, grabYTTitle, runGoogleAI, transformUrl } from './services';
+import { grabYT, grabYTTitle, runGoogleAI, extractVideoID } from './services';
 
 import { TranscriptResponse } from 'youtube-transcript';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,8 @@ import { IVideoData } from './api/title/route';
 
 export default function Home() {
 
-  const [ytUrl, setYtUrl] = useState<string>('https://www.youtube.com/watch?v=tdLs7nyQJtU');
+  const initURL = 'https://www.youtube.com/watch?v=rs72LPygGMY&t=26s' // 'https://www.youtube.com/watch?v=EYKYY1MssO4'
+  const [ytUrl, setYtUrl] = useState<string>(initURL);
   const [videoData, setVideoData] = useState<IVideoData>({
     videoId: '',
     title: '',
@@ -24,7 +25,6 @@ export default function Home() {
   const [voiceList, setVoiceList] = useState<IVoice[]>([]);
   const [voice, setVoice] = useState('Mónica');
   const [summaryLength, setSummaryLength] = useState<string>('ultra-short');
-
 
   useEffect(() => {
     const fetchVoices = () => {
@@ -48,7 +48,7 @@ export default function Home() {
   }
 
   const callGrabYT = async () => {
-    const url = transformUrl(ytUrl);
+    const url = extractVideoID(ytUrl);
     const ytResponse = await grabYT(url);
     const ytTitleResponse = await grabYTTitle(url);
     setVideoData({
@@ -76,7 +76,7 @@ export default function Home() {
   return (
     <div>
       <Space.Compact style={{ width: '100%' }}>
-        <Input allowClear onChange={onChangeInput} placeholder="https://www.youtube.com/watch?v=tdLs7nyQJtU" defaultValue='https://www.youtube.com/watch?v=tdLs7nyQJtU' addonAfter={videoData.title} />
+        <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} addonAfter={videoData.title} />
         <Button type="primary"><SwapOutlined /></Button>
         <Button type="primary"><SwapOutlined /></Button>
       </Space.Compact>

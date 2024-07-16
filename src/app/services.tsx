@@ -1,19 +1,36 @@
 import { generateText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { TranscriptResponse, YoutubeTranscript } from 'youtube-transcript';
+import { TranscriptResponse } from 'youtube-transcript';
 import { IVideoDataResponse } from './api/title/route';
 
-// remove the youtube url from e.target.value (example: https://www.youtube.com/watch?v=AAAAAAA)
-export const transformUrl = (url: string) => {
-    const urlParams = new URL(url);
-    const ytId = urlParams.searchParams.get('v');
-    console.log('ytId: ' + ytId)
-    if (ytId) {
-        return ytId;
-    } else {
-        return url;
+// console.log(extractVideoID("https://www.youtube.com/watch?v=AAAAAAA")); // Outputs: AAAAAAA
+// console.log(extractVideoID("https://youtu.be/BBBBBBBBBBB?si=rq4wDvJ4f3mQHW8V")); // Outputs: BBBBBBBBBBB
+export const extractVideoID = (url: string): string => {
+    // Pattern for standard YouTube URLs
+    const standardPattern = /www\.youtube\.com\/watch\?v=([^&]+)/;
+    // Pattern for shortened YouTube URLs
+    const shortPattern = /youtu\.be\/([^?]+)/;
+    // Pattern for YouTube shorts URLs
+    const shortsPattern = /www\.youtube\.com\/shorts\/([^?]+)/;
+
+    let match = url.match(standardPattern);
+    if (match && match[1]) {
+        return match[1];
     }
+
+    match = url.match(shortPattern);
+    if (match && match[1]) {
+        return match[1];
+    }
+
+    match = url.match(shortsPattern);
+    if (match && match[1]) {
+        return match[1];
+    }
+
+    // Return null if no video ID is found
+    return url;
 }
 
 export const runOpenAI = async () => {

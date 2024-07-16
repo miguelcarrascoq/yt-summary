@@ -5,16 +5,11 @@ export async function POST(request: NextRequest) {
     const data = await request.json();
     const inputPrompt = data['prompt']
     const inputSummaryLength = data['summaryLength'] ?? 'ultra-short';
+    const inputLang = data['lang'] ?? 'es';
     if (!inputPrompt) {
         return NextResponse.json({
             status: false,
             text: 'Prompt is required'
-        });
-    }
-    if (!inputSummaryLength) {
-        return NextResponse.json({
-            status: false,
-            text: 'SummaryLength is required'
         });
     }
     try {
@@ -44,9 +39,22 @@ export async function POST(request: NextRequest) {
                 extensionMax = 50;
                 break;
         }
-        const prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. La cantidad de palabras tiene que tener entre ${extensionMin} y ${extensionMax} palabras.`;
+
+        let language = 'español';
+        switch (inputLang) {
+            case 'es':
+                language = 'español';
+                break;
+            case 'en':
+                language = 'inglés';
+                break;
+            default:
+                language = 'español';
+                break;
+        }
+
+        const prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. La cantidad de palabras tiene que tener entre ${extensionMin} y ${extensionMax} palabras. Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML.`;
         const result = await model.generateContent([prompt]);
-        console.log(result.response.text());
 
         return NextResponse.json({
             status: true,

@@ -1,0 +1,42 @@
+import { generateText } from 'ai';
+import { createOpenAI } from '@ai-sdk/openai';
+import { TranscriptResponse } from 'youtube-transcript';
+import { IVideoDataResponse } from '../api/video-info/interface';
+
+export const runOpenAI = async () => {
+
+    const openai = createOpenAI({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY })
+
+    const { text } = await generateText({
+        model: openai('gpt-3.5-turbo'),
+        system: 'You are a friendly assistant!',
+        prompt: 'Why is the sky blue?',
+    });
+
+    console.log(text);
+}
+
+export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra-short', lang: string = 'en'): Promise<{ status: boolean, transcript: string }> => {
+    const res = await fetch(`/api/ai-gemini`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            prompt: prompt,
+            summaryLength: summaryLength,
+            lang: lang
+        })
+    });
+    return res.json();
+}
+
+export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => {
+    const res = await fetch(`/api/transcript?videoId=${videoId}`);
+    return res.json();
+}
+
+export const grabYTVideoInfo = async (videoId: string): Promise<IVideoDataResponse> => {
+    const res = await fetch(`/api/video-info?videoId=${videoId}`);
+    return res.json();
+}

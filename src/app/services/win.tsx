@@ -6,7 +6,6 @@ export interface IVoice {
     localService: boolean;
 }
 
-
 declare const window: any;
 
 const synth = typeof window !== 'undefined' && window.speechSynthesis;

@@ -1,34 +1,35 @@
 'use client'
 
-import { Button, Flex, Input, Select } from 'antd';
-import { grabYT, runGoogleAI } from './services';
+import { Button, Flex, Input, Select, Space, Image } from 'antd';
+import { grabYT, grabYTTitle, runGoogleAI, transformUrl } from './services';
 
 import { TranscriptResponse } from 'youtube-transcript';
 import { useEffect, useState } from 'react';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
-import { BorderOutlined } from '@ant-design/icons';
+import { BorderOutlined, SwapOutlined } from '@ant-design/icons';
+import { IVideoData } from './api/title/route';
 
 export default function Home() {
 
-  const [ytUrl, setYtUrl] = useState<string>('');
+  const [ytUrl, setYtUrl] = useState<string>('https://www.youtube.com/watch?v=tdLs7nyQJtU');
+  const [videoData, setVideoData] = useState<IVideoData>({
+    videoId: '',
+    title: '',
+    thumbnail: ''
+  });
   const [ytTranscript, setYtTrans] = useState<TranscriptResponse[]>([]);
   const [mergedTranscript, setMergedTranscript] = useState<string>('');
   const [summary, setSummary] = useState<string>('');
 
-  const selectValues = [0, 0.25, 0.5, 0.75, 1, 1.25, 1.5, 1.75, 2];
   const [voiceList, setVoiceList] = useState<IVoice[]>([]);
-  const [voiceOptions, setVoiceOptions] = useState([]);
   const [voice, setVoice] = useState('Mónica');
-  const [pitch, setPitch] = useState<number>(1);
-  const [rate, setRate] = useState<number>(1);
-  const [summaryLength, setSummaryLength] = useState<string>('short');
+  const [summaryLength, setSummaryLength] = useState<string>('ultra-short');
 
 
   useEffect(() => {
     const fetchVoices = () => {
       try {
         const data = populateVoiceList();
-        console.log(data)
         setVoiceList(data || []);
       } catch (err) {
         console.log(err);
@@ -47,8 +48,16 @@ export default function Home() {
   }
 
   const callGrabYT = async () => {
-    const ytResponse = await grabYT(ytUrl);
+    const url = transformUrl(ytUrl);
+    const ytResponse = await grabYT(url);
+    const ytTitleResponse = await grabYTTitle(url);
+    setVideoData({
+      videoId: url,
+      title: ytTitleResponse.data?.title ?? '',
+      thumbnail: ytTitleResponse.data?.thumbnail ?? ''
+    });
     console.log(ytResponse);
+    console.log(ytTitleResponse)
     setYtTrans(ytResponse);
     mergeTranscript(ytResponse)
   }
@@ -60,22 +69,17 @@ export default function Home() {
   }
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    console.log(e);
-    // remove the youtube url from e.target.value (example: https://www.youtube.com/watch?v=AAAAAAA)
     const url = e.target.value;
-    const urlParams = new URLSearchParams(url);
-    const ytId = urlParams.get('v');
-    if (ytId) {
-      setYtUrl(ytId);
-      return;
-    } else {
-      setYtUrl(url);
-    }
+    setYtUrl(url);
   };
 
   return (
     <div>
-      <Input allowClear onChange={onChangeInput} placeholder="Youtube ID (i.e.: tdLs7nyQJtU) or URL (i.e.: https://www.youtube.com/watch?v=tdLs7nyQJtU)" defaultValue='tdLs7nyQJtU' />
+      <Space.Compact style={{ width: '100%' }}>
+        <Input allowClear onChange={onChangeInput} placeholder="https://www.youtube.com/watch?v=tdLs7nyQJtU" defaultValue='https://www.youtube.com/watch?v=tdLs7nyQJtU' addonAfter={videoData.title} />
+        <Button type="primary"><SwapOutlined /></Button>
+        <Button type="primary"><SwapOutlined /></Button>
+      </Space.Compact>
       <Flex gap='small' >
         <Button type="primary" onClick={callGrabYT}>grabYT</Button>
         <Button type="primary" onClick={callRunGoogleAI}>runGoogleAI</Button>
@@ -83,6 +87,11 @@ export default function Home() {
 
         <Button type="primary" onClick={() => stopSpeech()} danger icon={<BorderOutlined />}></Button>
       </Flex >
+      <Image
+        width={200}
+        src={videoData.thumbnail}
+        alt=""
+      />
       <Select
         defaultValue={voice}
         popupMatchSelectWidth={false}
@@ -90,12 +99,12 @@ export default function Home() {
         options={voiceList.map((voice) => ({ label: `${voice.name} [${voice.lang}]`, value: voice.name }))}
       />
       <Select
-        defaultValue='short'
+        defaultValue='ultra-short'
         onChange={(value) => setSummaryLength(value)}
         options={[
           { label: 'Ultra-short', value: 'ultra-short' },
-          { label: 'short', value: 'short' },
-          { label: 'normal', value: 'normal' },
+          { label: 'Short', value: 'short' },
+          { label: 'Normal', value: 'normal' },
         ]} />
       <div><b>summary</b>: {summary}</div>
       <hr />

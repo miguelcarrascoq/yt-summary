@@ -2,6 +2,19 @@ import { generateText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { TranscriptResponse, YoutubeTranscript } from 'youtube-transcript';
+import { IVideoDataResponse } from './api/title/route';
+
+// remove the youtube url from e.target.value (example: https://www.youtube.com/watch?v=AAAAAAA)
+export const transformUrl = (url: string) => {
+    const urlParams = new URL(url);
+    const ytId = urlParams.searchParams.get('v');
+    console.log('ytId: ' + ytId)
+    if (ytId) {
+        return ytId;
+    } else {
+        return url;
+    }
+}
 
 export const runOpenAI = async () => {
 
@@ -33,13 +46,9 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'short
             extensionMin = 20
             extensionMax = 50;
             break;
-        case 'medium':
+        case 'normal':
             extensionMin = 50;
             extensionMax = 100;
-            break;
-        case 'long':
-            extensionMin = 100;
-            extensionMax = 300;
             break;
         default:
             extensionMin = 20;
@@ -54,6 +63,10 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'short
 
 export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => {
     const res = await fetch(`/api/transcript?videoId=${videoId}`);
-    console.log(res);
+    return res.json();
+}
+
+export const grabYTTitle = async (videoId: string): Promise<IVideoDataResponse> => {
+    const res = await fetch(`/api/title?videoId=${videoId}`);
     return res.json();
 }

@@ -14,7 +14,7 @@ const synth = typeof window !== 'undefined' && window.speechSynthesis;
 export const populateVoiceList = () => {
     try {
         let voices = synth.getVoices();
-        voices = voices.sort((a: any, b: any) => a.name.localeCompare(b.name));
+        voices = voices.sort((a: any, b: any) => a.name.localeCompare(b.lang));
         const voicesList: IVoice[] = voices.map((voice: any) => {
             return {
                 voiceURI: voice.voiceURI,
@@ -38,10 +38,8 @@ export const sayInput = (
     const utterance = new SpeechSynthesisUtterance(speechValue);
     let voices = synth.getVoices();
 
-    console.log('buscando', inputVoice)
-
     const selectedVoice = voices.find((voice: SpeechSynthesisVoice) => voice.name === inputVoice);
-    console.log(selectedVoice);
+
     if (selectedVoice) {
         utterance.voice = selectedVoice;
     } else {

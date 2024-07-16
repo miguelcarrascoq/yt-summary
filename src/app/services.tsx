@@ -2,7 +2,7 @@ import { generateText } from 'ai';
 import { createOpenAI } from '@ai-sdk/openai';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { TranscriptResponse } from 'youtube-transcript';
-import { IVideoDataResponse } from './api/title/route';
+import { IVideoDataResponse } from './api/title/interface';
 
 // console.log(extractVideoID("https://www.youtube.com/watch?v=AAAAAAA")); // Outputs: AAAAAAA
 // console.log(extractVideoID("https://youtu.be/BBBBBBBBBBB?si=rq4wDvJ4f3mQHW8V")); // Outputs: BBBBBBBBBBB
@@ -46,36 +46,18 @@ export const runOpenAI = async () => {
     console.log(text);
 }
 
-export const runGoogleAI = async (prompt: string, summaryLength: string = 'short') => {
-    const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string);
-
-    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
-
-    let extensionMin = 0;
-    let extensionMax = 100;
-
-    switch (summaryLength) {
-        case 'ultra-short':
-            extensionMin = 10;
-            extensionMax = 20;
-            break;
-        case 'short':
-            extensionMin = 20
-            extensionMax = 50;
-            break;
-        case 'normal':
-            extensionMin = 50;
-            extensionMax = 100;
-            break;
-        default:
-            extensionMin = 20;
-            extensionMax = 50;
-            break;
-    }
-    prompt = `Escribe un resumen de la siguiente conversación: ${prompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. La cantidad de palabras tiene que tener entre ${extensionMin} y ${extensionMax} palabras.`;
-    const result = await model.generateContent([prompt]);
-    console.log(result.response.text());
-    return result.response.text()
+export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra-short'): Promise<{ status: boolean, transcript: string }> => {
+    const res = await fetch(`/api/ai-gemini`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            prompt: prompt,
+            summaryLength: summaryLength
+        })
+    });
+    return res.json();
 }
 
 export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => {

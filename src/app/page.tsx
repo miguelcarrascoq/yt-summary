@@ -6,8 +6,9 @@ import { grabYT, grabYTTitle, runGoogleAI, extractVideoID } from './services';
 import { TranscriptResponse } from 'youtube-transcript';
 import { useEffect, useState } from 'react';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
-import { BorderOutlined, SwapOutlined } from '@ant-design/icons';
-import { IVideoData } from './api/title/route';
+import { BorderOutlined, SearchOutlined, SwapOutlined } from '@ant-design/icons';
+import { IVideoData } from './api/title/interface';
+import { convertYouTubeDuration } from './services/utils';
 
 export default function Home() {
 
@@ -16,7 +17,8 @@ export default function Home() {
   const [videoData, setVideoData] = useState<IVideoData>({
     videoId: '',
     title: '',
-    thumbnail: ''
+    thumbnail: '',
+    extra: undefined
   });
   const [ytTranscript, setYtTrans] = useState<TranscriptResponse[]>([]);
   const [mergedTranscript, setMergedTranscript] = useState<string>('');
@@ -25,6 +27,10 @@ export default function Home() {
   const [voiceList, setVoiceList] = useState<IVoice[]>([]);
   const [voice, setVoice] = useState('Mónica');
   const [summaryLength, setSummaryLength] = useState<string>('ultra-short');
+
+  const [loading, setLoading] = useState(false);
+  const [everythingOk, setEverythingOk] = useState(false);
+  const [actionPerfomed, setActionPerfomed] = useState('')
 
   useEffect(() => {
     const fetchVoices = () => {
@@ -39,33 +45,45 @@ export default function Home() {
   }, []);
 
   const mergeTranscript = (ytResponse: TranscriptResponse[]) => {
+    setActionPerfomed('Merging transcript...')
     let mergedTranscript = '';
     ytResponse.forEach((transcript) => {
       mergedTranscript += transcript.text + ' ';
     });
     console.log(mergedTranscript)
     setMergedTranscript(mergedTranscript)
+    return mergedTranscript
   }
 
   const callGrabYT = async () => {
+    setLoading(true);
+    setEverythingOk(false);
+    setActionPerfomed('Getting video data...')
     const url = extractVideoID(ytUrl);
     const ytResponse = await grabYT(url);
     const ytTitleResponse = await grabYTTitle(url);
     setVideoData({
       videoId: url,
       title: ytTitleResponse.data?.title ?? '',
-      thumbnail: ytTitleResponse.data?.thumbnail ?? ''
+      thumbnail: ytTitleResponse.data?.thumbnail ?? '',
+      extra: ytTitleResponse.data?.extra
     });
     console.log(ytResponse);
     console.log(ytTitleResponse)
     setYtTrans(ytResponse);
-    mergeTranscript(ytResponse)
+    const mergedTranscript = mergeTranscript(ytResponse)
+    callRunGoogleAI(mergedTranscript, summaryLength);
   }
 
-  const callRunGoogleAI = async () => {
+  const callRunGoogleAI = async (mergedTranscript: string, summaryLength: string) => {
+    setActionPerfomed('Running Google AI...')
+    setLoading(true);
     const result = await runGoogleAI(mergedTranscript, summaryLength);
     console.log(result);
-    setSummary(result);
+    setSummary(result.transcript);
+    setEverythingOk(true);
+    setLoading(false);
+    setActionPerfomed('')
   }
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -73,25 +91,40 @@ export default function Home() {
     setYtUrl(url);
   };
 
+  const handleKeyDown = (event: { key: string; }) => {
+    if (event.key === 'Enter') {
+      callGrabYT()
+    }
+  }
+
   return (
     <div>
+
+      {everythingOk &&
+        <div>
+          <div>Title: {videoData.title}</div>
+          <div>Duration: {convertYouTubeDuration(videoData.extra?.items[0]?.contentDetails.duration || '')}</div>
+          <Image
+            width={200}
+            src={videoData.thumbnail}
+            alt=""
+          />
+        </div>
+      }
       <Space.Compact style={{ width: '100%' }}>
-        <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} addonAfter={videoData.title} />
-        <Button type="primary"><SwapOutlined /></Button>
-        <Button type="primary"><SwapOutlined /></Button>
+        <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} onKeyDown={handleKeyDown} addonAfter={actionPerfomed} />
+        <Button type="primary" onClick={callGrabYT} loading={loading} icon={<SearchOutlined />}></Button>
       </Space.Compact>
+
+      <Button type="default" icon={<SwapOutlined />}></Button>
       <Flex gap='small' >
         <Button type="primary" onClick={callGrabYT}>grabYT</Button>
-        <Button type="primary" onClick={callRunGoogleAI}>runGoogleAI</Button>
+        <Button type="primary" onClick={() => callRunGoogleAI(mergedTranscript, summaryLength)}>runGoogleAI</Button>
         <Button type="primary" onClick={() => sayInput(summary, voice)}>sayInput</Button>
 
         <Button type="primary" onClick={() => stopSpeech()} danger icon={<BorderOutlined />}></Button>
       </Flex >
-      <Image
-        width={200}
-        src={videoData.thumbnail}
-        alt=""
-      />
+
       <Select
         defaultValue={voice}
         popupMatchSelectWidth={false}
@@ -109,6 +142,9 @@ export default function Home() {
       <div><b>summary</b>: {summary}</div>
       <hr />
       <div><b>mergedTranscript</b>: {mergedTranscript}</div>
+
+      <hr />
+      <pre>{JSON.stringify(videoData, undefined, 4)}</pre>
     </div>
 
   );

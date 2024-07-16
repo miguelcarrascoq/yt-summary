@@ -10,8 +10,8 @@
   },
   "dependencies": {
     "@ai-sdk/openai": "^0.0.36",
+    "@ant-design/icons": "^5.3.7",
     "@ant-design/nextjs-registry": "^1.0.0",
-    "@diffusionstudio/vits-web": "^1.0.2",
     "@google/generative-ai": "^0.15.0",
     "ai": "^3.2.24",
     "antd": "^5.19.2",

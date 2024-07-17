@@ -25,6 +25,7 @@ Run the development server: `npm run dev`
 - limit the AI request (Google Gemini API)
 - select the AI model
 - use only free AI models (??)
+- prevent (by IP?) multiple requests to the AI
 - remove tooltip. Add message instead
 - make more responsive
 - change style

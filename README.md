@@ -1,4 +1,4 @@
-Get a sumary of a youtube video using AI. Check the [demo](https://yt-summary-next.vercel.app/).
+Get a summary of a youtube video using AI. Check the [demo](https://yt-summary-next.vercel.app/).
 
 ![Preview](public/images/preview.jpg)
 
@@ -17,13 +17,9 @@ NEXT_PUBLIC_YOUTUBE_API_KEY="AIza..."
 ```
 
 - **NEXT_PUBLIC_INIT_YTID** just to have a default video to show when the page loads.
-
 - **NEXT_PUBLIC_CRYPTO_SECRET** is a 32 characters string and can be generated with `openssl rand -base64 24`
-
 - **NEXT_PUBLIC_OPENAI_API_KEY** is the API key for OpenAI.
-
 - **NEXT_PUBLIC_GOOGLE_API_KEY** is the API key for Google (Generative Language API).
-
 - **NEXT_PUBLIC_YOUTUBE_API_KEY** is the API key for Google (YouTube Data API v3).
 
 Run the development server: `npm run dev`

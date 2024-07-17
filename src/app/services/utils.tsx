@@ -14,18 +14,18 @@ export const extractVideoID = (url: string): string => {
     // Pattern for YouTube shorts URLs
     const shortsPattern = /www\.youtube\.com\/shorts\/([^?]+)/;
 
-    let match = url.match(standardPattern);
-    if (match && match[1]) {
+    let match = standardPattern.exec(url);
+    if (match?.[1]) {
         return match[1];
     }
 
-    match = url.match(shortPattern);
-    if (match && match[1]) {
+    match = RegExp(shortPattern).exec(url);
+    if (match?.[1]) {
         return match[1];
     }
 
-    match = url.match(shortsPattern);
-    if (match && match[1]) {
+    match = RegExp(shortsPattern).exec(url);
+    if (match?.[1]) {
         return match[1];
     }
 
@@ -42,7 +42,7 @@ export const extractVideoID = (url: string): string => {
  */
 export const convertYouTubeDuration = (duration: string) => {
     const regex = /PT(\d+H)?(\d+M)?(\d+S)?/;
-    const matchResult = duration.match(regex);
+    const matchResult = RegExp(regex).exec(duration);
     const parts = matchResult ? matchResult.slice(1) : [];
 
     let hours = 0;
@@ -62,7 +62,7 @@ export const convertYouTubeDuration = (duration: string) => {
     // Convert everything to minutes if needed, or keep as hours and minutes
     if (hours > 0) {
         minutes += hours * 60;
-        return `${minutes} minutes (${hours}h ${minutes % 60}m)`;
+        return `${hours}h ${minutes % 60}m`;
     } else {
         return `${minutes + Math.round(seconds / 60)} minutes`;
     }
@@ -107,8 +107,5 @@ export const checkLanguage = (text: string): string => {
         lang = lang.split('-')[0];
     }
 
-    console.log('checkLanguage', text, lang);
-
     return lang;
 };
-

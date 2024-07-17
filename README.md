@@ -38,6 +38,7 @@ Run the development server: `npm run dev`
 - show more info about the video
 - add 3 more options: 3 most important points, 5 most important points & a custom prompt (in a modal)
 - order voices by language
+- split the UI in different components
 
 ## FIXME
 

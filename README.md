@@ -1,6 +1,10 @@
 Get a sumary of a youtube video using AI. Check the [demo](https://yt-summary-next.vercel.app/).
 
+![Preview](public/images/preview.jpg)
+
 ## Getting Started
+
+Do you need a **YouTube Data API v3** key, a **Generative Language API** key and/or an **OpenAI** key.
 
 Create an environment file `cp .env.example .env.local` and set the following variables:
 
@@ -12,11 +16,15 @@ NEXT_PUBLIC_GOOGLE_API_KEY="AIza..."
 NEXT_PUBLIC_YOUTUBE_API_KEY="AIza..."
 ```
 
-`NEXT_PUBLIC_CRYPTO_SECRET` is a 32 characters string and can be generated with the following command:
+- **NEXT_PUBLIC_INIT_YTID** just to have a default video to show when the page loads.
 
-```bash
-openssl rand -base64 24
-```
+- **NEXT_PUBLIC_CRYPTO_SECRET** is a 32 characters string and can be generated with `openssl rand -base64 24`
+
+- **NEXT_PUBLIC_OPENAI_API_KEY** is the API key for OpenAI.
+
+- **NEXT_PUBLIC_GOOGLE_API_KEY** is the API key for Google (Generative Language API).
+
+- **NEXT_PUBLIC_YOUTUBE_API_KEY** is the API key for Google (YouTube Data API v3).
 
 Run the development server: `npm run dev`
 
@@ -26,7 +34,7 @@ Run the development server: `npm run dev`
 - select the AI model
 - use only free AI models (??)
 - prevent (by IP?) multiple requests to the AI
-- remove tooltip. Add message instead
+- switch between AI models & providers (Google, OpenAI)
 - make more responsive
 - change style
 - add related/more video links

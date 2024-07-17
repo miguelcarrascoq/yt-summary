@@ -1,11 +1,11 @@
 'use client'
 
-import { Button, Flex, Input, Select, Space, Card, Tooltip } from 'antd';
+import { Button, Flex, Input, Select, Space, Card, App } from 'antd';
 import { grabYT, grabYTVideoInfo, runGoogleAI } from './services/apis';
 import { TranscriptResponse } from 'youtube-transcript';
 import { useCallback, useEffect, useState } from 'react';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
-import { ApiOutlined, CopyOutlined, MutedOutlined, SoundOutlined } from '@ant-design/icons';
+import { CopyOutlined, MutedOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { IVideoData } from './api/video-info/interface';
 import { checkLanguage, convertYouTubeDuration, decodeHtmlEntities, extractVideoID } from './services/utils';
 import FloatButtonComponent from './components/FloatButton';
@@ -21,9 +21,10 @@ export default function Home() {
     thumbnail: '',
     extra: undefined
   });
-  const [ytTranscript, setYtTrans] = useState<TranscriptResponse[]>([]);
   const [mergedTranscript, setMergedTranscript] = useState<string>('');
   const [summary, setSummary] = useState<string>('');
+
+  const { message } = App.useApp();
 
   const [voiceList, setVoiceList] = useState<IVoice[]>([]);
   const [voice, setVoice] = useState('Mónica');
@@ -74,6 +75,7 @@ export default function Home() {
     setActionPerfomed('Getting video data...')
     setMergedTranscript('');
     setSummary('');
+    setPlayingAudio(false);
 
     const url = extractVideoID(ytUrl);
     const ytResponse = await grabYT(url);
@@ -84,7 +86,6 @@ export default function Home() {
       thumbnail: ytTitleResponse.data?.thumbnail ?? '',
       extra: ytTitleResponse.data?.extra
     });
-    setYtTrans(ytResponse);
     const mergedTranscript = mergeTranscript(ytResponse)
     if (generateSummary) {
       const langFromVideo = checkLanguage(ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? 'en');
@@ -115,42 +116,32 @@ export default function Home() {
     stopSpeech();
     setPlayingAudio(false);
   }
-
-  /*
-  const onChangeSummaryLength = (value: string) => {
-    setSummaryLength(value);
-    callGrabYT()
-  }*/
-
-  useEffect(() => {
-    if (ytUrl !== '' && ytUrl !== initURL) {
-      // callGrabYT()
-    }
-  }, [callGrabYT, summaryLength, ytUrl]);
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    message.success(`Copied to clipboard`);
+  }
 
   return (
     <div>
       <Space.Compact style={{ width: '100%' }}>
         <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} onKeyDown={handleKeyDown} addonAfter={actionPerfomed} />
-        <Tooltip title="Get info & make summary">
-          <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ApiOutlined />} disabled={ytUrl === ''}></Button>
-        </Tooltip>
+        <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ThunderboltOutlined />} disabled={ytUrl === ''}>Get Summary</Button>
+        <Select
+          defaultValue={summaryLength}
+          popupMatchSelectWidth={false}
+          onChange={(value) => setSummaryLength(value)}
+          options={[
+            { label: 'Ultra-short', value: 'ultra-short' },
+            { label: 'Short', value: 'short' },
+            { label: 'Normal', value: 'normal' },
+            { label: '3 bullets', value: '3-bullets' },
+            { label: '5 bullets', value: '5-bullets' },
+          ]} />
       </Space.Compact>
 
       {summary !== '' &&
         <Card size="small" style={{ marginTop: 10 }} title={<Flex gap='small'>
           <div>Summary</div>
-          <Select
-            size='small'
-            defaultValue={summaryLength}
-            popupMatchSelectWidth={false}
-            onChange={(value) => setSummaryLength(value)}
-            options={[
-              { label: 'Ultra-short', value: 'ultra-short' },
-              { label: 'Short', value: 'short' },
-              { label: 'Normal', value: 'normal' },
-            ]} />
-
         </Flex>} extra={
 
           <Flex gap='small' justify='flex-end'>
@@ -163,9 +154,7 @@ export default function Home() {
             />
             {!playingAudio && <Button size='small' type="default" onClick={() => playSpeechSummary(summary, voice)} icon={<SoundOutlined />}>Play</Button>}
             {playingAudio && <Button size='small' type="default" onClick={() => stopSpeechSummary()} danger icon={<MutedOutlined />}>Stop</Button>}
-            <Tooltip title="Copy text">
-              <Button type="link" size="small" icon={<CopyOutlined />} onClick={() => console.log('aaaaa')} />
-            </Tooltip>
+            <Button type="link" size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(summary)} />
           </Flex>
 
         }>
@@ -176,10 +165,8 @@ export default function Home() {
       {mergedTranscript !== '' &&
         <Card size="small" title={`Transcript: ${videoData.title}`} style={{ marginTop: 10 }} extra={
           <>
-            <>[{convertYouTubeDuration(videoData.extra?.items[0]?.contentDetails.duration || '')}]</>
-            <Tooltip title="Copy text">
-              <Button type="link" size="small" icon={<CopyOutlined />} onClick={() => console.log('aaaaa')} />
-            </Tooltip>
+            <>[{convertYouTubeDuration(videoData.extra?.items[0]?.contentDetails.duration ?? '')}]</>
+            <Button type="link" size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(mergedTranscript)} />
           </>
         }>
           <div dangerouslySetInnerHTML={{ __html: mergedTranscript }} style={{ height: 100, overflow: 'scroll' }}></div>

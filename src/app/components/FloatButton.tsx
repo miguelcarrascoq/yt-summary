@@ -1,9 +1,10 @@
 'use client'
 
-import { GithubOutlined, PlusOutlined, QrcodeOutlined, ShareAltOutlined } from '@ant-design/icons'
+import { GithubOutlined, PlusOutlined, QrcodeOutlined, QuestionOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { FloatButton, Modal, QRCode } from 'antd'
 import React, { useState } from 'react'
 import useOrigin from '../hooks/origin'
+import { openInNewTab } from '../services/utils'
 
 const FloatButtonComponent = () => {
 
@@ -30,9 +31,10 @@ const FloatButtonComponent = () => {
                 style={{ right: 24 }}
                 icon={<PlusOutlined />}
             >
-                <FloatButton tooltip="GitHub repo" icon={<GithubOutlined />} />
+                <FloatButton tooltip="GitHub repo" icon={<GithubOutlined />} onClick={() => openInNewTab('https://github.com/miguelcarrascoq/yt-summary')} />
                 <FloatButton tooltip="QR to scan" icon={<QrcodeOutlined />} onClick={showModal} />
                 <FloatButton tooltip="Share this page" icon={<ShareAltOutlined />} onClick={showModal} />
+                <FloatButton tooltip="Help" icon={<QuestionOutlined />} onClick={showModal} />
             </FloatButton.Group>
 
             <Modal title={`${urlToShare}`} open={isModalOpen} onOk={handleOk} onCancel={handleCancel} footer={<></>}>

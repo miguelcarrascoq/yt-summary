@@ -29,13 +29,18 @@ export const populateVoiceList = () => {
 };
 
 export const sayInput = (
-    speechValue: string,
+    htmlSpeechValue: string,
     inputVoice: string = 'Mónica',
     pitch: number = 1,
     rate: number = 1
 ) => {
+    // Use DOMParser to convert HTML to plain text
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(htmlSpeechValue, 'text/html');
+    const speechValue = doc.body.textContent || '';
+
     const utterance = new SpeechSynthesisUtterance(speechValue);
-    let voices = synth.getVoices();
+    let voices = window.speechSynthesis.getVoices();
 
     const selectedVoice = voices.find((voice: SpeechSynthesisVoice) => voice.name === inputVoice);
 
@@ -49,7 +54,7 @@ export const sayInput = (
     utterance.rate = rate;
 
     window.speechSynthesis.cancel();
-    synth.speak(utterance);
+    window.speechSynthesis.speak(utterance);
 };
 
 export const stopSpeech = () => {

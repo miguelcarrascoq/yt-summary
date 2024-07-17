@@ -76,7 +76,7 @@ export default function Home() {
     setActionPerfomed('Getting video data...')
     setMergedTranscript('');
     setSummary('');
-    setPlayingAudio(false);
+    stopSpeechSummary()
 
     const url = extractVideoID(ytUrl);
     const ytResponse = await grabYT(url);

@@ -18,8 +18,11 @@ export async function POST(request: NextRequest) {
 
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-        let extensionMin = 0;
-        let extensionMax = 100;
+        let extensionMin;
+        let extensionMax;
+
+        let hasBullets = false;
+        let bulletCount = 3;
 
         switch (inputSummaryLength) {
             case 'ultra-short':
@@ -34,13 +37,20 @@ export async function POST(request: NextRequest) {
                 extensionMin = 50;
                 extensionMax = 100;
                 break;
+            case '3-bullets':
+                hasBullets = true;
+                break;
+            case '5-bullets':
+                hasBullets = true;
+                bulletCount = 5;
+                break;
             default:
                 extensionMin = 20;
                 extensionMax = 50;
                 break;
         }
 
-        let language = 'español';
+        let language;
         switch (inputLang) {
             case 'es':
                 language = 'español';
@@ -53,7 +63,13 @@ export async function POST(request: NextRequest) {
                 break;
         }
 
-        const prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. La cantidad de palabras tiene que tener entre ${extensionMin} y ${extensionMax} palabras. Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML.`;
+        let prompt;
+        if (!hasBullets) {
+            prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. La cantidad de palabras tiene que tener entre ${extensionMin} y ${extensionMax} palabras. Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML.`;
+        } else {
+            prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. Debe destacar los ${bulletCount} principales conceptos (renderizar con lista numerada en HTML <ol><li>). Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML.`;
+        }
+
         const result = await model.generateContent([prompt]);
 
         return NextResponse.json({

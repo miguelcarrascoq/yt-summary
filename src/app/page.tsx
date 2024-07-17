@@ -64,6 +64,12 @@ export default function Home() {
     setLoading(true);
 
     const result = await runGoogleAI(mergedTranscript, summaryLength, langFromVideo);
+    if (!result.status) {
+      message.error('Error running Google AI');
+      setLoading(false);
+      setActionPerfomed('')
+      return;
+    }
     setSummary(result.transcript);
     setEverythingOk(true);
     setLoading(false);
@@ -81,6 +87,12 @@ export default function Home() {
     const url = extractVideoID(ytUrl);
     const ytResponse = await grabYT(url);
     const ytTitleResponse = await grabYTVideoInfo(url);
+    if (!ytTitleResponse.status) {
+      message.error('Error getting video info');
+      setLoading(false);
+      setActionPerfomed('')
+      return
+    }
     setVideoData({
       videoId: url,
       title: ytTitleResponse.data?.title ?? '',

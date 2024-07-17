@@ -20,7 +20,8 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra
     const res = await fetch(`/api/ai-gemini`, {
         method: 'POST',
         headers: {
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'X-Yt-Summary': process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? ''
         },
         body: JSON.stringify({
             prompt: prompt,
@@ -32,11 +33,19 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra
 }
 
 export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => {
-    const res = await fetch(`/api/transcript?videoId=${videoId}`);
+    const res = await fetch(`/api/transcript?videoId=${videoId}`, {
+        headers: {
+            'X-Yt-Summary': process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? ''
+        }
+    });
     return res.json();
 }
 
 export const grabYTVideoInfo = async (videoId: string): Promise<IVideoDataResponse> => {
-    const res = await fetch(`/api/video-info?videoId=${videoId}`);
+    const res = await fetch(`/api/video-info?videoId=${videoId}`, {
+        headers: {
+            'X-Yt-Summary': process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? ''
+        }
+    });
     return res.json();
 }

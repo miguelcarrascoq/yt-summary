@@ -7,7 +7,7 @@ import { GoogleAnalytics } from '@next/third-parties/google'
 
 export const metadata: Metadata = {
   title: "📺 Youtube summary",
-  description: "Just testing some API/AI stuff",
+  description: "Summarize YouTube videos with AI",
 };
 
 export default function RootLayout({

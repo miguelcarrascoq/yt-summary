@@ -4,7 +4,7 @@ export default function manifest(): MetadataRoute.Manifest {
   return {
     name: 'YT Summary',
     short_name: 'YT Summary',
-    description: 'Just testing some API/AI stuff',
+    description: 'Summarize YouTube videos with AI',
     start_url: '/',
     display: 'standalone',
     background_color: '#fff',

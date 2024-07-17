@@ -34,3 +34,22 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+## TODO
+
+- limit the AI request (Google Gemini API)
+- select the AI model
+- use only free AI models (??)
+- remove tooltip. Add message instead
+- make more responsive
+- change style
+- add related/more video links
+- add getparam to work (video ID as query param)
+- show more info about the video
+- add 3 more options: 3 most important points, 5 most important points & a custom prompt (in a modal)
+- order voices by language
+
+## FIX
+
+- play/stop status (when finish playing, it should change state)
+- Voice in mobile (when no voice found)

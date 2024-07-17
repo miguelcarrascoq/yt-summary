@@ -25,7 +25,7 @@ export default function RootLayout({
             </App>
           </AntdRegistry>
         </body>
-        <GoogleAnalytics gaId="G-6CTJ9JXML1" />
+        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ?? ''} />
       </html>
     </ConfigProvider>
   );

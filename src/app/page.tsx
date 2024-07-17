@@ -125,7 +125,6 @@ export default function Home() {
     <div>
       <Space.Compact style={{ width: '100%' }}>
         <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} onKeyDown={handleKeyDown} addonAfter={actionPerfomed} />
-        <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ThunderboltOutlined />} disabled={ytUrl === ''}>Get Summary</Button>
         <Select
           defaultValue={summaryLength}
           popupMatchSelectWidth={false}
@@ -137,6 +136,7 @@ export default function Home() {
             { label: '3 bullets', value: '3-bullets' },
             { label: '5 bullets', value: '5-bullets' },
           ]} />
+        <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ThunderboltOutlined />} disabled={ytUrl === ''}>Get Summary</Button>
       </Space.Compact>
 
       {summary !== '' &&

@@ -2,8 +2,8 @@ import { MetadataRoute } from 'next';
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: 'YT summary',
-    short_name: 'YT summary',
+    name: 'YT Summary',
+    short_name: 'YT Summary',
     description: 'Just testing some API/AI stuff',
     start_url: '/',
     display: 'standalone',
@@ -33,6 +33,6 @@ export default function manifest(): MetadataRoute.Manifest {
         type: 'image/png',
       },
     ],
-    categories: ['tools'],
+    categories: ['tools', 'ai', 'youtube', 'summary'],
   };
 }

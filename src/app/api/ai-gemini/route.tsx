@@ -6,14 +6,15 @@ export async function POST(request: NextRequest) {
     const inputPrompt = data['prompt']
     const inputSummaryLength = data['summaryLength'] ?? 'ultra-short';
     const inputLang = data['lang'] ?? 'es';
+
     if (!inputPrompt) {
         return NextResponse.json({
             status: false,
             text: 'Prompt is required'
         });
     }
-    try {
 
+    try {
         const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string);
 
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -30,11 +31,11 @@ export async function POST(request: NextRequest) {
                 extensionMax = 20;
                 break;
             case 'short':
-                extensionMin = 20
+                extensionMin = 30
                 extensionMax = 50;
                 break;
             case 'normal':
-                extensionMin = 50;
+                extensionMin = 60;
                 extensionMax = 100;
                 break;
             case '3-bullets':
@@ -65,9 +66,9 @@ export async function POST(request: NextRequest) {
 
         let prompt;
         if (!hasBullets) {
-            prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. La cantidad de palabras tiene que tener entre ${extensionMin} y ${extensionMax} palabras. Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML.`;
+            prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. La cantidad de palabras tiene que tener entre ${extensionMin} y ${extensionMax} palabras (no puede superar las ${extensionMax} palabras). Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML. Colocar en negrita frases importantes (<b>)`;
         } else {
-            prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. Debe destacar los ${bulletCount} principales conceptos (renderizar con lista numerada en HTML <ol><li>). Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML.`;
+            prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. Debe destacar los ${bulletCount} principales conceptos (renderizar con lista numerada en HTML <ol><li>). Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML. Colocar en negrita frases importantes (<b>)`;
         }
 
         const result = await model.generateContent([prompt]);

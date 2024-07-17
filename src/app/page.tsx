@@ -59,7 +59,7 @@ export default function Home() {
     return decodeHtml
   }
 
-  const callRunGoogleAI = async (mergedTranscript: string, summaryLength: string, langFromVideo: string) => {
+  const callRunGoogleAI = useCallback(async (mergedTranscript: string, summaryLength: string, langFromVideo: string) => {
     setActionPerfomed('Running Google AI...')
     setLoading(true);
 
@@ -74,7 +74,7 @@ export default function Home() {
     setEverythingOk(true);
     setLoading(false);
     setActionPerfomed('')
-  }
+  }, [message]);
 
   const callGrabYT = useCallback(async (generateSummary: boolean = true) => {
     setLoading(true);
@@ -107,7 +107,7 @@ export default function Home() {
       setLoading(false);
       setActionPerfomed('')
     }
-  }, [summaryLength, ytUrl]);
+  }, [callRunGoogleAI, message, summaryLength, ytUrl]);
 
   const onChangeInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const url = e.target.value;

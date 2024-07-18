@@ -10,7 +10,7 @@ export async function POST(request: NextRequest) {
     if (!inputPrompt) {
         return NextResponse.json({
             status: false,
-            text: 'Prompt is required'
+            message: 'Prompt is required'
         });
     }
 
@@ -71,6 +71,13 @@ export async function POST(request: NextRequest) {
             prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. Debe destacar los ${bulletCount} principales conceptos (renderizar con lista numerada en HTML <ol><li>). Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML. Colocar en negrita frases importantes (<b>)`;
         }
 
+        if (prompt.length > 100000) {
+            return NextResponse.json({
+                status: false,
+                message: 'Prompt is too long'
+            });
+        }
+
         const result = await model.generateContent([prompt]);
 
         return NextResponse.json({
@@ -80,7 +87,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         return NextResponse.json({
             status: false,
-            text: 'Failed to fetch transcript'
+            message: 'Failed to fetch transcript'
         });
     }
 

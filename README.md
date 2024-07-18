@@ -31,6 +31,7 @@ Run the development server: `npm run dev`
 - use only free AI models (??)
 - prevent (by IP?) multiple requests to the AI
 - switch between AI models & providers (Google, OpenAI)
+- restrict the amount of chars to be processed by the AI ($
 - make more responsive
 - change style
 - add related/more video links

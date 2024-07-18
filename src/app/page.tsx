@@ -248,46 +248,55 @@ export default function Home() {
                 <Button type="link" size="small" icon={<CopyOutlined />} style={{ ...colorCSS }} onClick={() => copyToClipboard(mergedTranscript)} />
               </Flex>
             }>
-              <Flex vertical gap='small' style={{ height: 'auto' }}>
-                <Typography.Text strong style={{ textAlign: 'center' }}>{videoData.title}</Typography.Text>
-                <Flex gap='small'>
-                  <Flex vertical gap='small' style={{ width: 140 }} align='center'>
-                    <Image
-                      width={120}
-                      height={90}
-                      src={videoData.extra?.items[0]?.snippet?.thumbnails?.high?.url ?? ''}
-                      alt={videoData.title}
-                      style={{ borderRadius: 8, border: '1px gray solid', cursor: 'pointer' }}
-                      onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}`)}
-                    />
-                    <Typography.Link style={{ ...colorCSS, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}><YoutubeOutlined /> {videoData.extra?.items[0].snippet.channelTitle}</Typography.Link>
-                    <Flex gap='small' justify='space-around'>
-                      <Typography.Text><EyeOutlined /> {formatNumber(Number(videoData.extra?.items[0]?.statistics.viewCount) || 0)}</Typography.Text>
-                      <Typography.Text><LikeOutlined /> {formatNumber(Number(videoData.extra?.items[0]?.statistics.likeCount) || 0)}</Typography.Text>
-                      <Typography.Text><CommentOutlined /> {formatNumber(Number(videoData.extra?.items[0]?.statistics.commentCount) || 0)}</Typography.Text>
-                    </Flex>
-                  </Flex>
-                  <div style={{ width: '100%' }}>
-                    {transcriptViewType === 'timeline' &&
-                      <Timeline style={{ paddingTop: 8, paddingLeft: 2, height: 189, overflow: 'scroll', width: '100%' }}
-                        items={transcriptTimeline.map((transcript) => (
-                          {
-                            color: 'gray',
-                            dot: <ClockCircleOutlined style={{ fontSize: '12px' }} />,
-                            children:
-                              <Flex>
-                                <Tag>{convertSecondsToTime(transcript.offset)}</Tag>
-                                <div dangerouslySetInnerHTML={{ __html: transcript.text }}></div>
-                              </Flex>
-                          }
-                        ))}
+              <Flex gap='small'>
+                <Row gutter={10}>
+                  <Col md={8} xs={24}>
+                    <Flex vertical gap='small' align='center'>
+                      <Image
+                        width={120}
+                        height={90}
+                        src={videoData.extra?.items[0]?.snippet?.thumbnails?.high?.url ?? videoData.thumbnail}
+                        alt={videoData.title}
+                        style={{ borderRadius: 8, border: '1px gray solid', cursor: 'pointer', width: '90%', height: 'auto' }}
+                        onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}`)}
                       />
-                    }
-                    {transcriptViewType === 'concat' &&
-                      <div dangerouslySetInnerHTML={{ __html: mergedTranscript }} style={{ height: 189, overflow: 'scroll' }}></div>
-                    }
-                  </div>
-                </Flex>
+                      <Flex gap='small' justify='space-around'>
+                        <Typography.Text><EyeOutlined /> {formatNumber(Number(videoData.extra?.items[0]?.statistics.viewCount) || 0)}</Typography.Text>
+                        <Typography.Text><LikeOutlined /> {formatNumber(Number(videoData.extra?.items[0]?.statistics.likeCount) || 0)}</Typography.Text>
+                        <Typography.Text><CommentOutlined /> {formatNumber(Number(videoData.extra?.items[0]?.statistics.commentCount) || 0)}</Typography.Text>
+                      </Flex>
+                    </Flex>
+                  </Col>
+                  <Col md={16} xs={24}>
+                    <div style={{ width: '100%' }}>
+                      <div style={{ textAlign: 'center' }}>
+                        <Typography.Text strong style={{ textAlign: 'center' }}>{videoData.title}</Typography.Text>&nbsp;&nbsp;
+                        <Typography.Link style={{ ...colorCSS, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}><YoutubeOutlined /> {videoData.extra?.items[0].snippet.channelTitle}</Typography.Link>
+                        <hr />
+                      </div>
+                      {transcriptViewType === 'timeline' &&
+                        <Timeline style={{ paddingTop: 8, paddingLeft: 2, height: 189, overflow: 'scroll', width: '100%' }}
+                          items={transcriptTimeline.map((transcript) => (
+                            {
+                              color: 'gray',
+                              dot: <ClockCircleOutlined style={{ fontSize: '12px' }} />,
+                              children:
+                                <Flex>
+                                  <Tag>{convertSecondsToTime(transcript.offset)}</Tag>
+                                  <div dangerouslySetInnerHTML={{ __html: transcript.text }}></div>
+                                </Flex>
+                            }
+                          ))}
+                        />
+                      }
+                      {transcriptViewType === 'concat' &&
+                        <div dangerouslySetInnerHTML={{ __html: mergedTranscript }} style={{ height: 189, overflow: 'scroll', textAlign: 'justify' }}></div>
+                      }
+                    </div>
+                  </Col>
+                </Row>
+
+
               </Flex>
 
             </Card>
@@ -299,7 +308,7 @@ export default function Home() {
               <Flex wrap gap="middle" justify='space-around' align='center'>
                 {relatedVideos.map((video, index) => (
                   <React.Fragment key={video?.id?.videoId?.toString()}>
-                    <Image alt={video.snippet.title} src={video.snippet.thumbnails.medium.url} width={120} height={90} style={{ height: 'auto', width: 120, borderRadius: 8, border: '1px gray solid', cursor: 'pointer' }}
+                    <Image alt={video.snippet.title} src={video.snippet.thumbnails.high.url} width={120} height={90} style={{ height: 'auto', width: 120, borderRadius: 8, border: '1px gray solid', cursor: 'pointer' }}
                       onClick={() => {
                         clearValues()
                         const url = `https://www.youtube.com/watch?v=${video.id.videoId}`;

@@ -121,7 +121,7 @@ export default function Home() {
     });
     const mergedTranscript = mergeTranscript(ytResponse)
     if (generateSummary) {
-      const langFromVideo = checkLanguage(ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? (ytResponse[0].lang ?? 'en'));
+      const langFromVideo = checkLanguage(ytResponse[0].lang ?? (ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? 'en'));
       callRunGoogleAI(mergedTranscript, summaryLength, langFromVideo, ytTitleResponse.data?.extra?.items[0]?.snippet?.channelId);
     } else {
       setLoading(false);
@@ -196,7 +196,7 @@ export default function Home() {
         <Col md={12} xs={24}>
 
           <Space.Compact style={{ width: '100%' }}>
-            <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} value={ytUrl} onKeyDown={handleKeyDown} />
+            <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} value={ytUrl} onKeyDown={handleKeyDown} maxLength={50} />
             <Select
               defaultValue={summaryLength}
               popupMatchSelectWidth={false}
@@ -267,7 +267,7 @@ export default function Home() {
                       <Typography.Text><CommentOutlined /> {formatNumber(Number(videoData.extra?.items[0]?.statistics.commentCount) || 0)}</Typography.Text>
                     </Flex>
                   </Flex>
-                  <div>
+                  <div style={{ width: '100%' }}>
                     {transcriptViewType === 'timeline' &&
                       <Timeline style={{ paddingTop: 8, paddingLeft: 2, height: 189, overflow: 'scroll', width: '100%' }}
                         items={transcriptTimeline.map((transcript) => (
@@ -293,7 +293,7 @@ export default function Home() {
             </Card>
           }
 
-          {everythingOk && relatedVideos && relatedVideos.length > 0 && ytUrl !== initURL &&
+          {relatedVideos && relatedVideos.length > 0 && ytUrl !== initURL &&
             <div style={{ textAlign: 'center' }}>
               <Divider style={{ color: 'white' }}>Related videos (select to summarize)</Divider>
               <Flex wrap gap="middle" justify='space-around' align='center'>

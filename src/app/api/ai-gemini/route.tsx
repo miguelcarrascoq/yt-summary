@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
             prompt = `Escribe un resumen de la siguiente conversación: ${inputPrompt}. Debido a que este texto generado será leido por un text-to-speech debe ser lo mas claro posible. Debe destacar los ${bulletCount} principales conceptos (renderizar con lista numerada en HTML <ol><li>). Tu resumen debe estar en el idioma ${language}. Si hay caracteres especiales, renderiza el texto en HTML. Colocar en negrita frases importantes (<b>)`;
         }
 
-        if (prompt.length > 100000) {
+        if (prompt.length > 120000) {
             return NextResponse.json({
                 status: false,
                 message: 'Prompt is too long'

@@ -66,7 +66,7 @@ export const convertYouTubeDuration = (duration: string) => {
         minutes += hours * 60;
         return `${hours}h ${minutes % 60}m`;
     } else {
-        return `${minutes + Math.round(seconds / 60)} minutes`;
+        return `${minutes + Math.round(seconds / 60)}m`;
     }
 }
 
@@ -127,5 +127,56 @@ export const webShare = async (title: string, text: string, url: string) => {
     } else {
         navigator.clipboard.writeText(`${title} - ${text} - ${url}`);
         message.success(`Copied to clipboard`, 3);
+    }
+}
+
+/**
+ * Convert a number of seconds to a human-readable time format
+ * @param {number} seconds - The number of seconds to convert
+ * @returns {string} The human-readable time format
+ * @example convertSecondsToTime(3661) // '1h 1m 1s'
+ * @example convertSecondsToTime(61) // '1m 1s'
+ * @example convertSecondsToTime(1) // '1s'
+ */
+export const convertSecondsToTime = (seconds: number) => {
+    seconds = Math.floor(seconds); // Round down the input seconds to the nearest whole number
+
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainingSeconds = seconds % 60;
+
+    let formattedDuration = "";
+    if (hours > 0) {
+        formattedDuration += `${hours}h `;
+    }
+    if (minutes > 0 || hours > 0) { // Include minutes if there are hours, even if minutes are 0
+        formattedDuration += `${minutes}m `;
+    }
+    if (remainingSeconds > 0 || (!hours && !minutes)) { // Include seconds if there are no hours and minutes, or if seconds are non-zero
+        formattedDuration += `${remainingSeconds}s`;
+    }
+    return formattedDuration.trim();
+}
+
+/**
+ * Format a number by abbreviating it with a suffix (K, M, B, T)
+ * @param {number} number - The number to format
+ * @returns {string} The formatted number with a suffix
+ * @example formatNumber(123456) // '123.5k'
+ * @example formatNumber(123456789) // '123.5m'
+ * @example formatNumber(123456789012) // '123.5b'
+ * @example formatNumber(123456789012345) // '123.5t'
+ */
+export const formatNumber = (number: number) => {
+    if (number >= 1e12) {
+        return (number / 1e12).toFixed(1) + 't'; // Trillion
+    } else if (number >= 1e9) {
+        return (number / 1e9).toFixed(1) + 'b'; // Billion
+    } else if (number >= 1e6) {
+        return (number / 1e6).toFixed(1) + 'm'; // Million
+    } else if (number >= 1e3) {
+        return (number / 1e3).toFixed(1) + 'k'; // Thousand
+    } else {
+        return number.toString(); // No abbreviation
     }
 }

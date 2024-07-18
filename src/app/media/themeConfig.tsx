@@ -5,7 +5,9 @@ const theme: ThemeConfig = {
         "colorPrimary": "#B70283",
     },
     components: {
-
+        Card: {
+            headerBg: "#17697a24",
+        }
     }
 };
 

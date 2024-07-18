@@ -38,7 +38,6 @@ export default function Home() {
   const [summaryLength, setSummaryLength] = useState<string>('ultra-short');
 
   const [loading, setLoading] = useState(false);
-  const [everythingOk, setEverythingOk] = useState(false);
   const [actionPerfomed, setActionPerfomed] = useState('')
   const [playingAudio, setPlayingAudio] = useState(false);
 
@@ -48,8 +47,10 @@ export default function Home() {
   const [transcriptViewType, setTranscriptViewType] = useState<string | number>('concat');
   const [transcriptTimeline, setTranscriptTimeline] = useState<TranscriptResponse[]>([]);
 
+  const primaryColor = '#B70283';
+
   const colorCSS: React.CSSProperties = {
-    color: '#B70283'
+    color: primaryColor
   }
 
   useEffect(() => {
@@ -92,12 +93,10 @@ export default function Home() {
     if (channelId !== undefined) {
       fetchYTVideoRelated(channelId)
     }
-    setEverythingOk(true);
   }, [message]);
 
   const callGrabYT = useCallback(async (fullURL?: string, generateSummary: boolean = true) => {
     setLoading(true);
-    setEverythingOk(false);
     setActionPerfomed('Getting video data...')
     setMergedTranscript('');
     setSummary('');
@@ -257,7 +256,7 @@ export default function Home() {
                         height={90}
                         src={videoData.extra?.items[0]?.snippet?.thumbnails?.high?.url ?? videoData.thumbnail}
                         alt={videoData.title}
-                        style={{ borderRadius: 8, border: '1px gray solid', cursor: 'pointer', width: '90%', height: 'auto' }}
+                        style={{ borderRadius: 8, border: `1px ${primaryColor} solid`, cursor: 'pointer', width: '90%', height: 'auto' }}
                         onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}`)}
                       />
                       <Flex gap='small' justify='space-around'>
@@ -275,14 +274,14 @@ export default function Home() {
                         <hr />
                       </div>
                       {transcriptViewType === 'timeline' &&
-                        <Timeline style={{ paddingTop: 8, paddingLeft: 2, height: 189, overflow: 'scroll', width: '100%' }}
+                        <Timeline style={{ paddingTop: 8, paddingLeft: 2, height: 189, overflow: 'scroll', width: 'max-content' }}
                           items={transcriptTimeline.map((transcript) => (
                             {
                               color: 'gray',
                               dot: <ClockCircleOutlined style={{ fontSize: '12px' }} />,
                               children:
                                 <Flex>
-                                  <Tag>{convertSecondsToTime(transcript.offset)}</Tag>
+                                  <Tag color="default">{convertSecondsToTime(transcript.offset)}</Tag>
                                   <div dangerouslySetInnerHTML={{ __html: transcript.text }}></div>
                                 </Flex>
                             }
@@ -308,7 +307,7 @@ export default function Home() {
               <Flex wrap gap="middle" justify='space-around' align='center'>
                 {relatedVideos.map((video, index) => (
                   <React.Fragment key={video?.id?.videoId?.toString()}>
-                    <Image alt={video.snippet.title} src={video.snippet.thumbnails.high.url} width={120} height={90} style={{ height: 'auto', width: 120, borderRadius: 8, border: '1px gray solid', cursor: 'pointer' }}
+                    <Image alt={video.snippet.title} src={video.snippet.thumbnails.high.url} width={120} height={90} style={{ height: 'auto', width: 120, borderRadius: 8, border: `1px ${primaryColor} solid`, cursor: 'pointer' }}
                       onClick={() => {
                         clearValues()
                         const url = `https://www.youtube.com/watch?v=${video.id.videoId}`;

@@ -1,15 +1,17 @@
 'use client'
 
-import { Button, Flex, Input, Select, Space, Card, App, Row, Col, Grid } from 'antd';
-import { grabYT, grabYTVideoInfo, runGoogleAI } from './services/apis';
+import { Button, Flex, Input, Select, Space, Card, App, Row, Col, Grid, Tooltip, Divider } from 'antd';
+import { grabYT, grabYTChannelRelatedVideos, grabYTVideoInfo, runGoogleAI } from './services/apis';
 import { TranscriptResponse } from 'youtube-transcript';
 import { useCallback, useEffect, useState } from 'react';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
 import { CopyOutlined, MutedOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { IVideoData } from './api/video-info/interface';
-import { checkLanguage, convertYouTubeDuration, decodeHtmlEntities, extractVideoID } from './services/utils';
+import { checkLanguage, convertYouTubeDuration, decodeHtmlEntities, extractVideoID, openInNewTab } from './services/utils';
 import FloatButtonComponent from './components/FloatButton';
 import Image from 'next/image'
+import { IYoutubeSearchResponseItem } from './api/yt-related/interface';
+import React from 'react';
 
 export default function Home() {
 
@@ -36,6 +38,9 @@ export default function Home() {
   const [actionPerfomed, setActionPerfomed] = useState('')
   const [playingAudio, setPlayingAudio] = useState(false);
 
+  const [relatedVideos, setRelatedVideos] = useState<IYoutubeSearchResponseItem[]>([]);
+  const [videoTitleRollOver, setVideoTitleRollOver] = useState('');
+
   useEffect(() => {
     const fetchVoices = () => {
       try {
@@ -59,24 +64,27 @@ export default function Home() {
     return decodeHtml
   }
 
-  const callRunGoogleAI = useCallback(async (mergedTranscript: string, summaryLength: string, langFromVideo: string) => {
+  const callRunGoogleAI = useCallback(async (mergedTranscript: string, summaryLength: string, langFromVideo: string, channelId?: string) => {
     setActionPerfomed('Running Google AI...')
     setLoading(true);
 
     const result = await runGoogleAI(mergedTranscript, summaryLength, langFromVideo);
     if (!result.status) {
-      message.error('Error running Google AI');
+      message.error(result.message);
       setLoading(false);
       setActionPerfomed('')
       return;
     }
     setSummary(result.transcript);
-    setEverythingOk(true);
     setLoading(false);
     setActionPerfomed('')
+    if (channelId !== undefined) {
+      fetchYTVideoRelated(channelId)
+    }
+    setEverythingOk(true);
   }, [message]);
 
-  const callGrabYT = useCallback(async (generateSummary: boolean = true) => {
+  const callGrabYT = useCallback(async (fullURL?: string, generateSummary: boolean = true) => {
     setLoading(true);
     setEverythingOk(false);
     setActionPerfomed('Getting video data...')
@@ -84,7 +92,7 @@ export default function Home() {
     setSummary('');
     stopSpeechSummary()
 
-    const url = extractVideoID(ytUrl);
+    const url = fullURL ? extractVideoID(fullURL) : extractVideoID(ytUrl);
     const ytResponse = await grabYT(url);
     const ytTitleResponse = await grabYTVideoInfo(url);
     if (!ytTitleResponse.status) {
@@ -102,7 +110,7 @@ export default function Home() {
     const mergedTranscript = mergeTranscript(ytResponse)
     if (generateSummary) {
       const langFromVideo = checkLanguage(ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? 'en');
-      callRunGoogleAI(mergedTranscript, summaryLength, langFromVideo);
+      callRunGoogleAI(mergedTranscript, summaryLength, langFromVideo, ytTitleResponse.data?.extra?.items[0]?.snippet?.channelId);
     } else {
       setLoading(false);
       setActionPerfomed('')
@@ -134,6 +142,39 @@ export default function Home() {
     message.success(`Copied to clipboard`);
   }
 
+  const fetchYTVideoRelated = async (videoId: string) => {
+    const res = await grabYTChannelRelatedVideos(videoId, 15);
+    if (res.status && res.data?.items && res.data?.items.length > 0) {
+      setRelatedVideos(res.data?.items);
+    } else {
+      setRelatedVideos([]);
+    }
+  }
+
+  const onChangeSelect = (value: string) => {
+    setSummaryLength(value)
+  }
+
+  useEffect(() => {
+    if (ytUrl === '') {
+      setLoading(false);
+      setActionPerfomed('')
+      setMergedTranscript('');
+      setSummary('');
+      stopSpeechSummary()
+      setRelatedVideos([]);
+    }
+  }, [ytUrl])
+
+  const clearValues = () => {
+    setLoading(false);
+    setActionPerfomed('')
+    setMergedTranscript('');
+    setSummary('');
+    stopSpeechSummary()
+    setRelatedVideos([]);
+  }
+
   return (
     <div style={{ marginTop: screens.md ? 64 : 0 }}>
       <Row gutter={10} style={{ marginBottom: 22 }}>
@@ -143,11 +184,11 @@ export default function Home() {
         <Col md={12} xs={24}>
 
           <Space.Compact style={{ width: '100%' }}>
-            <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} onKeyDown={handleKeyDown} addonAfter={actionPerfomed} />
+            <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} value={ytUrl} onKeyDown={handleKeyDown} />
             <Select
               defaultValue={summaryLength}
               popupMatchSelectWidth={false}
-              onChange={(value) => setSummaryLength(value)}
+              onChange={(value) => onChangeSelect(value)}
               options={[
                 { label: 'Ultra-short', value: 'ultra-short' },
                 { label: 'Short', value: 'short' },
@@ -155,7 +196,7 @@ export default function Home() {
                 { label: '3 bullets', value: '3-bullets' },
                 { label: '5 bullets', value: '5-bullets' },
               ]} />
-            <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ThunderboltOutlined />} disabled={ytUrl === ''}>{screens.xs ? '' : 'Get Summary'}</Button>
+            <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ThunderboltOutlined />} disabled={ytUrl === ''}>{loading ? actionPerfomed : (screens.xs ? '' : 'Get Summary')}</Button>
           </Space.Compact>
 
           {summary !== '' &&
@@ -188,20 +229,44 @@ export default function Home() {
                 <Button type="link" size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(mergedTranscript)} />
               </>
             }>
-              <div dangerouslySetInnerHTML={{ __html: mergedTranscript }} style={{ height: 100, overflow: 'scroll' }}></div>
+              <Flex gap='small'>
+                <Image
+                  width={120}
+                  height={90}
+                  src={videoData.extra?.items[0]?.snippet?.thumbnails?.high?.url ?? ''}
+                  alt={videoData.title}
+                  style={{ height: 'auto', width: 120, borderRadius: 8, border: '1px gray solid', cursor: 'pointer' }}
+                  onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}`)}
+                />
+                <div dangerouslySetInnerHTML={{ __html: mergedTranscript }} style={{ height: 100, overflow: 'scroll' }}></div>
+              </Flex>
+
             </Card>
           }
 
-          {everythingOk &&
-            <Flex gap='small' style={{ marginTop: 10 }} justify='center'>
-              <Image
-                width={256}
-                height={144}
-                src={videoData.thumbnail}
-                alt=""
-                style={{ height: 'auto', width: 256 }}
-              />
-            </Flex>
+          {everythingOk && relatedVideos && relatedVideos.length > 0 && ytUrl !== initURL &&
+            <>
+              <div style={{ textAlign: 'center' }}>
+                <Divider style={{ color: 'white' }}>Related videos (select to analize)</Divider>
+                <Flex wrap gap="middle" justify='space-around' align='center'>
+                  {relatedVideos.map((video, index) => (
+                    <React.Fragment key={index}>
+                      <Image alt={video.snippet.title} src={video.snippet.thumbnails.medium.url} width={120} height={90} style={{ height: 'auto', width: 120, borderRadius: 8, border: '1px gray solid', cursor: 'pointer' }}
+                        onClick={() => {
+                          clearValues()
+                          const url = `https://www.youtube.com/watch?v=${video.id.videoId}`;
+                          setYtUrl(url);
+                          callGrabYT(url)
+                        }}
+                        onMouseOver={() => setVideoTitleRollOver(video.snippet.title)}
+                        onMouseOut={() => setVideoTitleRollOver('')}
+                      />
+                    </React.Fragment>
+                  ))}
+                </Flex>
+                <div dangerouslySetInnerHTML={{ __html: videoTitleRollOver }} style={{ color: 'white', fontSize: 12, paddingTop: 6, fontWeight: 'bold' }}></div>
+              </div>
+            </>
           }
 
         </Col>

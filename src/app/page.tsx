@@ -5,7 +5,7 @@ import { grabYT, grabYTChannelRelatedVideos, grabYTVideoInfo, runGoogleAI } from
 import { TranscriptResponse } from 'youtube-transcript';
 import { useCallback, useEffect, useState } from 'react';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
-import { CopyOutlined, MutedOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { CopyOutlined, LinkOutlined, MutedOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
 import { IVideoData } from './api/video-info/interface';
 import { checkLanguage, convertYouTubeDuration, decodeHtmlEntities, extractVideoID, openInNewTab } from './services/utils';
 import FloatButtonComponent from './components/FloatButton';
@@ -214,7 +214,7 @@ export default function Home() {
                 />
                 {!playingAudio && <Button size='small' type="default" onClick={() => playSpeechSummary(summary, voice)} icon={<SoundOutlined />}>Play</Button>}
                 {playingAudio && <Button size='small' type="default" onClick={() => stopSpeechSummary()} danger icon={<MutedOutlined />}>Stop</Button>}
-                <Button type="link" size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(summary)} />
+                <Button type="link" size="small" icon={<CopyOutlined />} style={{ color: '#B70283' }} onClick={() => copyToClipboard(summary)} ></Button>
               </Flex>
 
             }>
@@ -226,7 +226,7 @@ export default function Home() {
             <Card size="small" title={`Transcript: ${videoData.title}`} style={{ marginTop: 10 }} extra={
               <>
                 <>[{convertYouTubeDuration(videoData.extra?.items[0]?.contentDetails.duration ?? '')}]</>
-                <Button type="link" size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(mergedTranscript)} />
+                <Button type="link" size="small" icon={<CopyOutlined />} style={{ color: '#B70283' }} onClick={() => copyToClipboard(mergedTranscript)} />
               </>
             }>
               <Flex gap='small'>
@@ -238,6 +238,7 @@ export default function Home() {
                   style={{ height: 'auto', width: 120, borderRadius: 8, border: '1px gray solid', cursor: 'pointer' }}
                   onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}`)}
                 />
+                <Button type="link" size="small" icon={<LinkOutlined />} style={{ position: 'absolute', color: '#B70283' }} onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}`)} />
                 <div dangerouslySetInnerHTML={{ __html: mergedTranscript }} style={{ height: 100, overflow: 'scroll' }}></div>
               </Flex>
 

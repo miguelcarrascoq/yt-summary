@@ -1,3 +1,5 @@
+import { message } from 'antd';
+
 /**
  * Extracts the video ID from a YouTube URL.
  * @param url The YouTube URL.
@@ -113,4 +115,17 @@ export const checkLanguage = (text: string): string => {
 export const openInNewTab = (url: string) => {
     const newWindow = window.open(url, '_blank', 'noopener,noreferrer')
     if (newWindow) newWindow.opener = null
+}
+
+export const webShare = async (title: string, text: string, url: string) => {
+    if (navigator.share) {
+        try {
+            await navigator.share({ title, text, url });
+        } catch (error) {
+            console.error('Error sharing:', error);
+        }
+    } else {
+        navigator.clipboard.writeText(`${title} - ${text} - ${url}`);
+        message.success(`Copied to clipboard`, 3);
+    }
 }

@@ -270,7 +270,9 @@ export default function Home() {
                     <div style={{ width: '100%' }}>
                       <div style={{ textAlign: 'center' }}>
                         <Typography.Text strong style={{ textAlign: 'center' }}>{videoData.title}</Typography.Text>&nbsp;&nbsp;
-                        <Typography.Link style={{ ...colorCSS, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}><YoutubeOutlined /> {videoData.extra?.items[0].snippet.channelTitle}</Typography.Link>
+                        <Typography.Link style={{ ...colorCSS, textOverflow: 'ellipsis', whiteSpace: 'nowrap', overflow: 'hidden' }}
+                          onClick={() => openInNewTab(`https://youtube.com/channel/${videoData.extra?.items[0].snippet.channelId}`)}
+                        ><YoutubeOutlined /> {videoData.extra?.items[0].snippet.channelTitle}</Typography.Link>
                         <hr />
                       </div>
                       {transcriptViewType === 'timeline' &&

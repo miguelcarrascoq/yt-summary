@@ -55,7 +55,7 @@ export function middleware(request: NextRequest) {
     contentSecurityPolicyHeaderValue
   );
 
-  return NextResponse.next();
+  return response;
 }
 
 export const config = {

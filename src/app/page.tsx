@@ -248,7 +248,7 @@ export default function Home() {
               </Flex>
             }>
               <Flex gap='small'>
-                <Row gutter={10}>
+                <Row gutter={10} style={{ width: '-webkit-fill-available' }}>
                   <Col md={8} xs={24}>
                     <Flex vertical gap='small' align='center'>
                       <Image
@@ -296,10 +296,7 @@ export default function Home() {
                     </div>
                   </Col>
                 </Row>
-
-
               </Flex>
-
             </Card>
           }
 

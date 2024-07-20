@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest, NextResponse, userAgent } from 'next/server';
 
 const allowedOrigins = [
   process.env.NEXT_PUBLIC_APP_URL,
@@ -39,7 +39,14 @@ export function middleware(request: NextRequest) {
 
   const headerYTSummary = request.headers.get('X-Yt-Summary');
 
-  if (headerYTSummary !== process.env.NEXT_PUBLIC_CRYPTO_SECRET) {
+  const { device } = userAgent(request);
+  // { vendor: undefined, model: undefined, type: undefined }
+  // {vendor: "Apple", model: "Macintosh"}
+
+  if (
+    headerYTSummary !== process.env.NEXT_PUBLIC_CRYPTO_SECRET ||
+    device.vendor === undefined
+  ) {
     return new Response(
       JSON.stringify({
         status: false,

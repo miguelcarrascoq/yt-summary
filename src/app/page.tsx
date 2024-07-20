@@ -276,14 +276,14 @@ export default function Home() {
                         <hr />
                       </div>
                       {transcriptViewType === 'timeline' &&
-                        <Timeline style={{ paddingTop: 8, paddingLeft: 2, height: 189, overflow: 'scroll', width: 'max-content' }}
+                        <Timeline style={{ paddingTop: 8, paddingLeft: 2, height: 189, overflow: 'scroll', width: '-webkit-fill-available' }}
                           items={transcriptTimeline.map((transcript) => (
                             {
                               color: 'gray',
                               dot: <ClockCircleOutlined style={{ fontSize: '12px' }} />,
                               children:
                                 <Flex>
-                                  <Tag color="default">{convertSecondsToTime(transcript.offset)}</Tag>
+                                  <Tag color="default" style={{ height: 'fit-content' }}>{convertSecondsToTime(transcript.offset)}</Tag>
                                   <div dangerouslySetInnerHTML={{ __html: transcript.text }}></div>
                                 </Flex>
                             }

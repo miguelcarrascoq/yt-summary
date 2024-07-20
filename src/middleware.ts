@@ -1,6 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 
-const allowedOrigins = ['https://yt-summary-next.vercel.app'];
+const allowedOrigins = [
+  process.env.NEXT_PUBLIC_APP_URL,
+  // 'http://localhost:3000',
+];
 
 const corsOptions = {
   'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',

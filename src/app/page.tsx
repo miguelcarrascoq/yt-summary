@@ -10,12 +10,13 @@ import FloatButtonComponent from './components/FloatButton';
 
 import { TranscriptResponse } from 'youtube-transcript';
 
-import { IVideoData } from './api/video-info/interface';
-import { IYoutubeSearchResponseItem } from './api/yt-related/interface';
+import { IVideoData } from '../lib/interfaces/video-info-interface';
+import { IYoutubeSearchResponseItem } from '../lib/interfaces/video-related-interface';
 
-import { grabYT, grabYTChannelRelatedVideos, grabYTVideoInfo, runGoogleAI } from './services/apis';
 import { checkLanguage, convertSecondsToTime, convertYouTubeDuration, decodeHtmlEntities, extractVideoID, formatNumber, openInNewTab } from './services/utils';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
+
+import { googleAI, videoInfo, videoRelated, videoTranscript } from '@/lib/actions';
 
 export default function Home() {
 
@@ -80,14 +81,14 @@ export default function Home() {
     setActionPerfomed('Running AI...')
     setLoading(true);
 
-    const result = await runGoogleAI(mergedTranscript, summaryLength, langFromVideo);
+    const result = await googleAI(mergedTranscript, summaryLength, langFromVideo);
     if (!result.status) {
       message.error(result.message);
       setLoading(false);
       setActionPerfomed('')
       return;
     }
-    setSummary(result.transcript);
+    setSummary(result.transcript ?? '');
     setLoading(false);
     setActionPerfomed('')
     if (channelId !== undefined) {
@@ -103,9 +104,9 @@ export default function Home() {
     stopSpeechSummary()
 
     const url = fullURL ? extractVideoID(fullURL) : extractVideoID(ytUrl);
-    const ytResponse = await grabYT(url);
+    const ytResponse = await videoTranscript(url);
     setTranscriptTimeline(ytResponse)
-    const ytTitleResponse = await grabYTVideoInfo(url);
+    const ytTitleResponse = await videoInfo(url);
     if (!ytTitleResponse.status) {
       message.error('Error getting video info');
       setLoading(false);
@@ -153,8 +154,8 @@ export default function Home() {
     message.success(`Copied to clipboard`);
   }
 
-  const fetchYTVideoRelated = async (videoId: string) => {
-    const res = await grabYTChannelRelatedVideos(videoId, 15);
+  const fetchYTVideoRelated = async (channelId: string) => {
+    const res = await videoRelated(channelId, 15);
     if (res.status && res.data?.items && res.data?.items.length > 0) {
       setRelatedVideos(res.data?.items);
     } else {
@@ -330,6 +331,7 @@ export default function Home() {
       </Row>
 
       <FloatButtonComponent />
+
     </div>
   );
 }

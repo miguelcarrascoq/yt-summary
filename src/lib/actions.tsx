@@ -1,18 +1,65 @@
+
+'use server';
+
+import { IVideoDataResponse, IYoutubeDataApiResponse } from './interfaces/video-info-interface';
+import { IVideoSearchResponse, IYoutubeSearchResponse } from './interfaces/video-related-interface';
+
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { NextRequest, NextResponse } from 'next/server';
+import { TranscriptResponse, YoutubeTranscript } from 'youtube-transcript';
 
-export async function POST(request: NextRequest) {
-    const data = await request.json();
-    const inputPrompt = data['prompt']
-    const inputSummaryLength = data['summaryLength'] ?? 'ultra-short';
-    const inputLang = data['lang'] ?? 'es';
-
-    if (!inputPrompt) {
-        return NextResponse.json({
-            status: false,
-            message: 'Prompt is required'
-        });
+export async function videoTranscript(videoId: string): Promise<TranscriptResponse[]> {
+    try {
+        const transcript: TranscriptResponse[] = await YoutubeTranscript.fetchTranscript(videoId);
+        return transcript;
+    } catch (error) {
+        return [{
+            text: 'Transcript not available',
+            duration: 0,
+            offset: 0
+        }];
     }
+}
+
+export async function videoInfo(videoId: string): Promise<IVideoDataResponse> {
+    try {
+        const resTitle: Response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails,statistics&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`)
+
+        const titleResponse: IYoutubeDataApiResponse = await resTitle.json();
+        return {
+            status: true,
+            data: {
+                videoId: videoId,
+                title: titleResponse.items[0].snippet.title,
+                thumbnail: `https://i1.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+                extra: titleResponse
+            }
+        };
+    } catch (error) {
+        return {
+            status: false,
+            message: 'Failed to fetch transcript'
+        };
+    }
+}
+
+export async function videoRelated(channelId: string, maxResults = 15): Promise<IVideoSearchResponse> {
+    try {
+        const res: Response = await fetch(`https://content-youtube.googleapis.com/youtube/v3/search?videoDuration=medium&type=video&maxResults=${maxResults}&part=snippet&order=date&channelId=${channelId}&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`)
+
+        const apiResponse: IYoutubeSearchResponse = await res.json();
+        return {
+            status: true,
+            data: apiResponse
+        };
+    } catch (error) {
+        return {
+            status: false,
+            message: 'Failed to fetch related videos'
+        };
+    }
+}
+
+export async function googleAI(inputPrompt: string, inputSummaryLength = 'ultra-short', inputLang = 'es') {
 
     try {
         const genAI = new GoogleGenerativeAI(process.env.NEXT_PUBLIC_GOOGLE_API_KEY as string);
@@ -72,23 +119,23 @@ export async function POST(request: NextRequest) {
         }
 
         if (prompt.length > 120000) {
-            return NextResponse.json({
+            return {
                 status: false,
                 message: 'Prompt is too long'
-            });
+            };
         }
 
         const result = await model.generateContent([prompt]);
 
-        return NextResponse.json({
+        return {
             status: true,
             transcript: result.response.text()
-        });
+        };
     } catch (error) {
-        return NextResponse.json({
+        return {
             status: false,
             message: 'Failed to fetch transcript'
-        });
+        };
     }
 
 }

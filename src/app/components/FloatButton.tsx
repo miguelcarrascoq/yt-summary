@@ -1,6 +1,6 @@
 'use client'
 
-import { GithubOutlined, PlusOutlined, QrcodeOutlined, QuestionOutlined, ShareAltOutlined } from '@ant-design/icons'
+import { GithubOutlined, MoreOutlined, QrcodeOutlined, QuestionOutlined, ShareAltOutlined } from '@ant-design/icons'
 import { FloatButton, Modal, QRCode } from 'antd'
 import React, { useState } from 'react'
 import useOrigin from '../hooks/origin'
@@ -33,7 +33,7 @@ const FloatButtonComponent = () => {
                 trigger="click"
                 type="primary"
                 style={{ right: 24 }}
-                icon={<PlusOutlined />}
+                icon={<MoreOutlined />}
             >
                 <FloatButton tooltip="GitHub repo" icon={<GithubOutlined />} onClick={() => openInNewTab(process.env.NEXT_PUBLIC_REPO ?? 'https://github.com/miguelcarrascoq/yt-summary')} />
                 <FloatButton tooltip="QR to scan" icon={<QrcodeOutlined />} onClick={showModal} />

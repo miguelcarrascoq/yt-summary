@@ -256,7 +256,7 @@ export default function Home() {
                         height={90}
                         src={videoData.extra?.items[0]?.snippet?.thumbnails?.high?.url ?? videoData.thumbnail}
                         alt={videoData.title}
-                        style={{ borderRadius: 8, border: `1px ${primaryColor} solid`, cursor: 'pointer', width: '90%', height: 'auto' }}
+                        style={{ borderRadius: 8, border: `3px ${primaryColor} solid`, cursor: 'pointer', width: '90%', height: 'auto' }}
                         onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}`)}
                       />
                       <Flex gap='small' justify='space-around'>
@@ -283,7 +283,10 @@ export default function Home() {
                               dot: <ClockCircleOutlined style={{ fontSize: '12px' }} />,
                               children:
                                 <Flex>
-                                  <Tag color="default" style={{ height: 'fit-content' }}>{convertSecondsToTime(transcript.offset)}</Tag>
+                                  <Button size="small" type="primary"
+                                    onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}&t=${transcript.offset}s`)}>
+                                    {convertSecondsToTime(transcript.offset)}
+                                  </Button>&nbsp;&nbsp;
                                   <div dangerouslySetInnerHTML={{ __html: transcript.text }}></div>
                                 </Flex>
                             }

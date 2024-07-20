@@ -42,10 +42,11 @@ export function middleware(request: NextRequest) {
   const { device } = userAgent(request);
   // { vendor: undefined, model: undefined, type: undefined }
   // {vendor: "Apple", model: "Macintosh"}
+  // {"model": "K", "type": "mobile"}
 
   if (
     headerYTSummary !== process.env.NEXT_PUBLIC_CRYPTO_SECRET ||
-    device.vendor === undefined
+    device.type === 'console'
   ) {
     return new Response(
       JSON.stringify({

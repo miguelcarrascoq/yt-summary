@@ -1,3 +1,4 @@
+import crypto from 'crypto';
 import { message } from 'antd';
 
 /**
@@ -179,4 +180,24 @@ export const formatNumber = (number: number) => {
     } else {
         return number.toString(); // No abbreviation
     }
+}
+
+export const encrypt = (text: string): string => {
+    const algorithm = 'aes-256-ctr';
+    const iv = crypto.randomBytes(16);
+
+    const cipher = crypto.createCipheriv(algorithm, process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? '', iv);
+
+    const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+
+    return encrypted.toString('hex');
+}
+
+export const decrypt = (hash: any): string => {
+    const algorithm = 'aes-256-ctr';
+    const decipher = crypto.createDecipheriv(algorithm, process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? '', Buffer.from(hash.iv, 'hex'));
+
+    const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, 'hex')), decipher.final()]);
+
+    return decrpyted.toString();
 }

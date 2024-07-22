@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse, userAgent } from 'next/server';
-import { CONST_APP_URL } from './app/services/constants';
+import { CONST_APP_URL, CONST_CRYPTO_SECRET } from './app/services/constants';
 
 const allowedOrigins = [
   CONST_APP_URL,
@@ -47,7 +47,7 @@ export function middleware(request: NextRequest) {
   console.log(device);
 
   if (
-    headerYTSummary !== process.env.NEXT_PUBLIC_CRYPTO_SECRET ||
+    headerYTSummary !== CONST_CRYPTO_SECRET ||
     device.type === 'console' ||
     device.vendor === undefined
   ) {

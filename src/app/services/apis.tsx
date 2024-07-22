@@ -3,6 +3,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { TranscriptResponse } from 'youtube-transcript';
 import { IVideoDataResponse } from '../api/video-info/interface';
 import { IVideoSearchResponse } from '../api/yt-related/interface';
+import { CONST_CRYPTO_SECRET } from './constants';
 
 export const runOpenAI = async () => {
 
@@ -22,7 +23,7 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
-            'X-Yt-Summary': process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? ''
+            'X-Yt-Summary': CONST_CRYPTO_SECRET
         },
         body: JSON.stringify({
             prompt: prompt,
@@ -36,7 +37,7 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra
 export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => {
     const res = await fetch(`/api/transcript?videoId=${videoId}`, {
         headers: {
-            'X-Yt-Summary': process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? ''
+            'X-Yt-Summary': CONST_CRYPTO_SECRET
         }
     });
     return res.json();
@@ -45,7 +46,7 @@ export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => 
 export const grabYTVideoInfo = async (videoId: string): Promise<IVideoDataResponse> => {
     const res = await fetch(`/api/video-info?videoId=${videoId}`, {
         headers: {
-            'X-Yt-Summary': process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? ''
+            'X-Yt-Summary': CONST_CRYPTO_SECRET
         }
     });
     return res.json();
@@ -54,7 +55,7 @@ export const grabYTVideoInfo = async (videoId: string): Promise<IVideoDataRespon
 export const grabYTChannelRelatedVideos = async (channelId: string, maxResults: number = 10): Promise<IVideoSearchResponse> => {
     const res = await fetch(`/api/yt-related?channelId=${channelId}&maxResults=${maxResults}`, {
         headers: {
-            'X-Yt-Summary': process.env.NEXT_PUBLIC_CRYPTO_SECRET ?? ''
+            'X-Yt-Summary': CONST_CRYPTO_SECRET
         }
     });
     return res.json();

@@ -9,4 +9,11 @@ describe('extractVideoID', () => {
         expect(result).toEqual(expectedVideoID);
     });
 
+    it('extracts video ID from a valid YouTube Shorts URL', () => {
+        const url = 'https://www.youtube.com/shorts/BaETbOALz3E?si=FZjnJm691wA_3eQ5';
+        const expectedVideoID = 'BaETbOALz3E';
+        const result = extractVideoID(url);
+        expect(result).toEqual(expectedVideoID);
+    });
+
 });

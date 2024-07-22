@@ -7,26 +7,27 @@ import { message } from 'antd';
  * @example extractVideoID('https://www.youtube.com/watch?v=rs72LPygGMY&t=26s') // 'rs72LPygGMY'
  * @example extractVideoID('https://youtu.be/rs72LPygGMY') // 'rs72LPygGMY'
  * @example extractVideoID('https://www.youtube.com/shorts/rs72LPygGMY') // 'rs72LPygGMY'
+ * 
  */
 export const extractVideoID = (url: string): string => {
     // Pattern for standard YouTube URLs
-    const standardPattern = /www\.youtube\.com\/watch\?v=([^&]+)/;
+    const standardPattern = /(?:www\.)?youtube\.com\/watch\?v=([^&]+)/;
     // Pattern for shortened YouTube URLs
-    const shortPattern = /youtu\.be\/([^?]+)/;
-    // Pattern for YouTube shorts URLs
-    const shortsPattern = /www\.youtube\.com\/shorts\/([^?]+)/;
+    const shortPattern = /(?:www\.)?youtu\.be\/([^?]+)/;
+    // Updated Pattern for YouTube shorts URLs to include both 'www' and non-'www' URLs
+    const shortsPattern = /(?:www\.)?youtube\.com\/shorts\/([^?]+)/;
 
     let match = standardPattern.exec(url);
     if (match?.[1]) {
         return match[1];
     }
 
-    match = RegExp(shortPattern).exec(url);
+    match = shortPattern.exec(url);
     if (match?.[1]) {
         return match[1];
     }
 
-    match = RegExp(shortsPattern).exec(url);
+    match = shortsPattern.exec(url);
     if (match?.[1]) {
         return match[1];
     }

@@ -4,6 +4,7 @@ import { Divider, Flex } from 'antd'
 import React, { useState } from 'react'
 import Image from 'next/image'
 import { primaryColor } from '../services/constants'
+import { IYoutubeSearchResponseItem } from '../api/yt-related/interface'
 
 const RelatedVideosComponent = (
     {
@@ -14,7 +15,7 @@ const RelatedVideosComponent = (
         clearValues,
         initURL
     }: {
-        relatedVideos: any[],
+        relatedVideos: IYoutubeSearchResponseItem[],
         ytUrl: string,
         setYtUrl: (url: string) => void,
         callGrabYT: (url: string) => void,

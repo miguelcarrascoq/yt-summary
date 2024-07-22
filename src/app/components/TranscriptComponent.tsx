@@ -6,6 +6,8 @@ import React from 'react'
 import Image from 'next/image'
 import { convertSecondsToTime, convertYouTubeDuration, formatNumber, openInNewTab } from '../services/utils'
 import { primaryColor, primaryColorCSS } from '../services/constants'
+import { TranscriptResponse } from 'youtube-transcript'
+import { IVideoData } from '../api/video-info/interface'
 
 const TranscriptComponent = (
     {
@@ -16,11 +18,11 @@ const TranscriptComponent = (
         transcriptTimeline,
         copyToClipboard,
     }: {
-        videoData: any,
+        videoData: IVideoData,
         transcriptViewType: string,
         setTranscriptViewType: (value: string) => void,
         mergedTranscript: string,
-        transcriptTimeline: any[],
+        transcriptTimeline: TranscriptResponse[],
         copyToClipboard: (text: string) => void,
     }
 ) => {

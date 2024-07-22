@@ -5,7 +5,7 @@ import { Button, Divider, Flex, Grid, Modal } from 'antd'
 import React, { useState } from 'react'
 
 const initFontSize = 22;
-const incrementFontSize = 2;
+const incrementFontSize = 4;
 
 const TextZoomComponent = (
     { summaryText }: { summaryText: string },

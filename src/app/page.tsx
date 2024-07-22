@@ -2,8 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Button, Input, Select, Space, App, Row, Col, Grid } from 'antd';
-import { ThunderboltOutlined } from '@ant-design/icons';
+import { App, Row, Col, Grid } from 'antd';
 
 import { TranscriptResponse } from 'youtube-transcript';
 
@@ -17,6 +16,7 @@ import FloatButtonComponent from './components/FloatButtonComponent';
 import TranscriptComponent from './components/TranscriptComponent';
 import RelatedVideosComponent from './components/RelatedVideosComponent';
 import SummaryComponent from './components/SummaryComponent';
+import SearchComponent from './components/SearchComponent';
 
 export default function Home() {
 
@@ -138,10 +138,6 @@ export default function Home() {
     }
   }
 
-  const onChangeSelect = (value: string) => {
-    setSummaryLength(value)
-  }
-
   useEffect(() => {
     if (ytUrl === '') {
       setLoading(false);
@@ -170,21 +166,7 @@ export default function Home() {
         </Col>
         <Col md={12} xs={24}>
 
-          <Space.Compact style={{ width: '100%' }}>
-            <Input allowClear onChange={onChangeInput} placeholder={initURL} defaultValue={initURL} value={ytUrl} onKeyDown={handleKeyDown} maxLength={50} />
-            <Select
-              defaultValue={summaryLength}
-              popupMatchSelectWidth={false}
-              onChange={(value) => onChangeSelect(value)}
-              options={[
-                { label: 'Ultra-short', value: 'ultra-short' },
-                { label: 'Short', value: 'short' },
-                { label: 'Normal', value: 'normal' },
-                { label: '3 bullets', value: '3-bullets' },
-                { label: '5 bullets', value: '5-bullets' },
-              ]} />
-            <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ThunderboltOutlined />} disabled={ytUrl === ''}>{loading ? actionPerfomed : (screens.xs ? '' : 'Get Summary')}</Button>
-          </Space.Compact>
+          <SearchComponent ytUrl={ytUrl} setYtUrl={setYtUrl} initURL={initURL} callGrabYT={callGrabYT} loading={loading} actionPerfomed={actionPerfomed} handleKeyDown={handleKeyDown} onChangeInput={onChangeInput} summaryLength={summaryLength} setSummaryLength={setSummaryLength} />
 
           <SummaryComponent ref={summaryComponentRef} summary={summary} copyToClipboard={copyToClipboard} />
 

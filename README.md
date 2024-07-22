@@ -26,12 +26,13 @@ Run the development server: `npm run dev`
 
 ## TODO
 
+- add modal with API KEYs
 - limit the AI request (Google Gemini API)
 - select the AI model
 - use only free AI models (??)
 - prevent (by IP?) multiple requests to the AI
 - switch between AI models & providers (Google, OpenAI)
-- restrict the amount of chars to be processed by the AI ($
+- restrict the amount of chars to be processed by the AI ($)
 - make more responsive
 - change style
 - add related/more video links
@@ -39,7 +40,6 @@ Run the development server: `npm run dev`
 - show more info about the video
 - add 3 more options: 3 most important points, 5 most important points & a custom prompt (in a modal)
 - order voices by language
-- split the UI in different components
 
 ## FIXME
 

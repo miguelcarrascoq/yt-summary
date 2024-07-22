@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
     } catch (error) {
         return NextResponse.json({
             status: false,
-            message: 'Failed to fetch transcript'
+            message: `Failed to fetch transcript data: ${error}`
         });
     }
 

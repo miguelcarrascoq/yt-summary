@@ -16,6 +16,7 @@ import { IYoutubeSearchResponseItem } from './api/yt-related/interface';
 import { grabYT, grabYTChannelRelatedVideos, grabYTVideoInfo, runGoogleAI } from './services/apis';
 import { checkLanguage, convertSecondsToTime, convertYouTubeDuration, decodeHtmlEntities, extractVideoID, formatNumber, openInNewTab } from './services/utils';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
+import TextZoomComponent from './components/TextZoomComponent';
 
 export default function Home() {
 
@@ -225,7 +226,8 @@ export default function Home() {
                 />
                 {!playingAudio && <Button size='small' type="default" onClick={() => playSpeechSummary(summary, voice)} icon={<SoundOutlined />}>Play</Button>}
                 {playingAudio && <Button size='small' type="default" onClick={() => stopSpeechSummary()} danger icon={<MutedOutlined />}>Stop</Button>}
-                <Button type="link" size="small" icon={<CopyOutlined />} style={{ ...colorCSS }} onClick={() => copyToClipboard(summary)} ></Button>
+                <TextZoomComponent summaryText={summary} />
+                <Button size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(summary)} ></Button>
               </Flex>
 
             }>
@@ -244,7 +246,7 @@ export default function Home() {
                     { label: 'Timeline', value: 'timeline', icon: <FieldTimeOutlined /> },
                   ]}
                 />
-                <Button type="link" size="small" icon={<CopyOutlined />} style={{ ...colorCSS }} onClick={() => copyToClipboard(mergedTranscript)} />
+                <Button size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(`${videoData.title}: ${mergedTranscript}`)} />
               </Flex>
             }>
               <Flex gap='small'>

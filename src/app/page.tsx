@@ -6,7 +6,7 @@ import Image from 'next/image'
 import { Button, Flex, Input, Select, Space, Card, App, Row, Col, Grid, Divider, Segmented, Typography, Timeline, Tag } from 'antd';
 import { AlignLeftOutlined, ClockCircleOutlined, CommentOutlined, CopyOutlined, EyeOutlined, FieldTimeOutlined, LikeOutlined, MutedOutlined, SoundOutlined, ThunderboltOutlined, YoutubeOutlined } from '@ant-design/icons';
 
-import FloatButtonComponent from './components/FloatButton';
+import FloatButtonComponent from './components/FloatButtonComponent';
 
 import { TranscriptResponse } from 'youtube-transcript';
 

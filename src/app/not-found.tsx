@@ -1,5 +1,5 @@
 import Link from 'next/link'
-import FloatButtonComponent from './components/FloatButton'
+import FloatButtonComponent from './components/FloatButtonComponent'
 
 export default function NotFound() {
     return (

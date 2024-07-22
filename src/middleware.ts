@@ -46,11 +46,7 @@ export function middleware(request: NextRequest) {
   // {"model": "K", "type": "mobile"}
   console.log(device);
 
-  if (
-    headerYTSummary !== CONST_CRYPTO_SECRET ||
-    device.type === 'console' ||
-    device.vendor === undefined
-  ) {
+  if (headerYTSummary !== CONST_CRYPTO_SECRET || device.type === 'console') {
     return new Response(
       JSON.stringify({
         status: false,

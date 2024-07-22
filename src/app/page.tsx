@@ -17,6 +17,7 @@ import TranscriptComponent from './components/TranscriptComponent';
 import RelatedVideosComponent from './components/RelatedVideosComponent';
 import SummaryComponent from './components/SummaryComponent';
 import SearchComponent from './components/SearchComponent';
+import PageNotAvailable from './components/PageNotAvailable';
 
 export default function Home() {
 
@@ -159,28 +160,36 @@ export default function Home() {
   }
 
   return (
-    <div style={{ marginTop: screens.md ? 64 : 0 }}>
-      <Row gutter={10} style={{ marginBottom: 22 }}>
-        <Col md={6} xs={0}>
+    <>
+      {process.env.NEXT_PUBLIC_APP_ALIVE === 'true' ? (
+        <div style={{ marginTop: screens.md ? 64 : 0 }}>
+          <Row gutter={10} style={{ marginBottom: 22 }}>
+            <Col md={6} xs={0}>
 
-        </Col>
-        <Col md={12} xs={24}>
+            </Col>
+            <Col md={12} xs={24}>
 
-          <SearchComponent ytUrl={ytUrl} setYtUrl={setYtUrl} initURL={initURL} callGrabYT={callGrabYT} loading={loading} actionPerfomed={actionPerfomed} handleKeyDown={handleKeyDown} onChangeInput={onChangeInput} summaryLength={summaryLength} setSummaryLength={setSummaryLength} />
+              <SearchComponent ytUrl={ytUrl} setYtUrl={setYtUrl} initURL={initURL} callGrabYT={callGrabYT} loading={loading} actionPerfomed={actionPerfomed} handleKeyDown={handleKeyDown} onChangeInput={onChangeInput} summaryLength={summaryLength} setSummaryLength={setSummaryLength} />
 
-          <SummaryComponent ref={summaryComponentRef} summary={summary} copyToClipboard={copyToClipboard} />
+              <SummaryComponent ref={summaryComponentRef} summary={summary} copyToClipboard={copyToClipboard} />
 
-          <TranscriptComponent mergedTranscript={mergedTranscript} videoData={videoData} transcriptTimeline={transcriptTimeline} transcriptViewType={transcriptViewType} setTranscriptViewType={setTranscriptViewType} copyToClipboard={copyToClipboard} />
+              <TranscriptComponent mergedTranscript={mergedTranscript} videoData={videoData} transcriptTimeline={transcriptTimeline} transcriptViewType={transcriptViewType} setTranscriptViewType={setTranscriptViewType} copyToClipboard={copyToClipboard} />
 
-          <RelatedVideosComponent relatedVideos={relatedVideos} ytUrl={ytUrl} setYtUrl={setYtUrl} callGrabYT={callGrabYT} clearValues={clearValues} initURL={initURL} />
+              <RelatedVideosComponent relatedVideos={relatedVideos} ytUrl={ytUrl} setYtUrl={setYtUrl} callGrabYT={callGrabYT} clearValues={clearValues} initURL={initURL} />
 
-        </Col>
-        <Col md={6} xs={0}>
+            </Col>
+            <Col md={6} xs={0}>
 
-        </Col>
-      </Row>
+            </Col>
+          </Row>
 
-      <FloatButtonComponent />
-    </div>
+          <FloatButtonComponent />
+        </div>
+      ) : (
+        <PageNotAvailable />
+      )}
+
+    </>
+
   );
 }

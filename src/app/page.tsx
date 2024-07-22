@@ -18,7 +18,7 @@ import RelatedVideosComponent from './components/RelatedVideosComponent';
 import SummaryComponent from './components/SummaryComponent';
 import SearchComponent from './components/SearchComponent';
 import PageNotAvailable from './components/PageNotAvailable';
-import { CONST_INIT_YTID } from './services/constants';
+import { CONST_APP_ALIVE, CONST_INIT_YTID } from './services/constants';
 
 export default function Home() {
 
@@ -162,7 +162,7 @@ export default function Home() {
 
   return (
     <>
-      {process.env.NEXT_PUBLIC_APP_ALIVE === 'true' ? (
+      {CONST_APP_ALIVE ? (
         <div style={{ marginTop: screens.md ? 64 : 0 }}>
           <Row gutter={10} style={{ marginBottom: 22 }}>
             <Col md={6} xs={0}>

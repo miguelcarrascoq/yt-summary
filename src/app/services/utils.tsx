@@ -6,8 +6,7 @@ import { message } from 'antd';
  * @returns The video ID.
  * @example extractVideoID('https://www.youtube.com/watch?v=rs72LPygGMY&t=26s') // 'rs72LPygGMY'
  * @example extractVideoID('https://youtu.be/rs72LPygGMY') // 'rs72LPygGMY'
- * @example extractVideoID('https://www.youtube.com/shorts/rs72LPygGMY') // 'rs72LPygGMY'
- * 
+ * @example extractVideoID('https://www.youtube.com/shorts/opxFAmAUJ30') // 'opxFAmAUJ30'
  */
 export const extractVideoID = (url: string): string => {
     // Pattern for standard YouTube URLs

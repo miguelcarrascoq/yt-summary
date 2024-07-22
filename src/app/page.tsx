@@ -2,10 +2,8 @@
 
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { Button, Flex, Input, Select, Space, Card, App, Row, Col, Grid, Divider } from 'antd';
+import { Button, Flex, Input, Select, Space, Card, App, Row, Col, Grid } from 'antd';
 import { CopyOutlined, MutedOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
-
-import FloatButtonComponent from './components/FloatButtonComponent';
 
 import { TranscriptResponse } from 'youtube-transcript';
 
@@ -15,8 +13,9 @@ import { IYoutubeSearchResponseItem } from './api/yt-related/interface';
 import { grabYT, grabYTChannelRelatedVideos, grabYTVideoInfo, runGoogleAI } from './services/apis';
 import { checkLanguage, decodeHtmlEntities, extractVideoID } from './services/utils';
 import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
+
+import FloatButtonComponent from './components/FloatButtonComponent';
 import TextZoomComponent from './components/TextZoomComponent';
-import { primaryColor, primaryColorCSS } from './services/constants';
 import TranscriptComponent from './components/TranscriptComponent';
 import RelatedVideosComponent from './components/RelatedVideosComponent';
 

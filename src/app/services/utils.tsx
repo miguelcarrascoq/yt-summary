@@ -31,7 +31,6 @@ export const extractVideoID = (url: string): string => {
         return match[1];
     }
 
-    // Return null if no video ID is found
     return url;
 }
 

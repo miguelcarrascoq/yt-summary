@@ -18,10 +18,11 @@ import RelatedVideosComponent from './components/RelatedVideosComponent';
 import SummaryComponent from './components/SummaryComponent';
 import SearchComponent from './components/SearchComponent';
 import PageNotAvailable from './components/PageNotAvailable';
+import { CONST_INIT_YTID } from './services/constants';
 
 export default function Home() {
 
-  const initURL = `https://www.youtube.com/watch?v=${process.env.NEXT_PUBLIC_INIT_YTID ?? 'rs72LPygGMY'}`;
+  const initURL = `https://www.youtube.com/watch?v=${CONST_INIT_YTID}`;
   const [ytUrl, setYtUrl] = useState<string>(initURL);
   const [videoData, setVideoData] = useState<IVideoData>({
     videoId: '',

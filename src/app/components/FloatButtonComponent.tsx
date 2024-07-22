@@ -5,12 +5,12 @@ import { FloatButton, Modal, QRCode } from 'antd'
 import React, { useState } from 'react'
 import useOrigin from '../hooks/origin'
 import { openInNewTab, webShare } from '../services/utils'
-import { CONST_APP_URL } from '../services/constants'
+import { CONST_APP_URL, CONST_INIT_YTID } from '../services/constants'
 
 const FloatButtonComponent = () => {
 
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const urlToShare = (useOrigin() + '?vid=' + (process.env.NEXT_PUBLIC_INIT_YTID ?? 'rs72LPygGMY')) || '/';
+    const urlToShare = (useOrigin() + '?vid=' + CONST_INIT_YTID) || '/';
 
     const showModal = () => {
         setIsModalOpen(true);

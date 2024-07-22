@@ -3,11 +3,11 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { TranscriptResponse } from 'youtube-transcript';
 import { IVideoDataResponse } from '../api/video-info/interface';
 import { IVideoSearchResponse } from '../api/yt-related/interface';
-import { CONST_CRYPTO_SECRET } from './constants';
+import { CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY } from './constants';
 
 export const runOpenAI = async () => {
 
-    const openai = createOpenAI({ apiKey: process.env.NEXT_PUBLIC_OPENAI_API_KEY })
+    const openai = createOpenAI({ apiKey: CONST_OPENAI_API_KEY })
 
     const { text } = await generateText({
         model: openai('gpt-3.5-turbo'),

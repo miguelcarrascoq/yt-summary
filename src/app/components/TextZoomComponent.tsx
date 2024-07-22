@@ -1,7 +1,7 @@
 'use client'
 
 import { CloseOutlined, CompressOutlined, FontSizeOutlined, ZoomInOutlined, ZoomOutOutlined } from '@ant-design/icons'
-import { Button, Divider, Flex, Modal } from 'antd'
+import { Button, Divider, Flex, Grid, Modal } from 'antd'
 import React, { useState } from 'react'
 
 const initFontSize = 22;
@@ -10,6 +10,8 @@ const incrementFontSize = 2;
 const TextZoomComponent = (
     { summaryText }: { summaryText: string },
 ) => {
+
+    const screens = Grid.useBreakpoint();
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [fontSize, setFontSize] = useState(initFontSize);
@@ -43,7 +45,7 @@ const TextZoomComponent = (
 
             <Modal
                 open={isModalOpen} onOk={handleOk} onCancel={handleCancel} closeIcon={false}
-                style={{ top: 0 }}
+                style={{ top: screens.md ? 16 : 0 }}
                 title={
                     <Flex justify='space-between'>
                         <div>Summary</div>

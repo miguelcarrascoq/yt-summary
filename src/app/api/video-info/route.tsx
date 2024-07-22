@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { IVideoDataResponse, IYoutubeDataApiResponse } from './interface';
+import { CONST_YOUTUBE_API_KEY } from '@/app/services/constants';
 
 export async function GET(request: NextRequest): Promise<NextResponse<IVideoDataResponse>> {
     const videoId = request.nextUrl.searchParams.get('videoId');
@@ -11,7 +12,7 @@ export async function GET(request: NextRequest): Promise<NextResponse<IVideoData
     }
     try {
 
-        const resTitle: Response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails,statistics&key=${process.env.NEXT_PUBLIC_YOUTUBE_API_KEY}`)
+        const resTitle: Response = await fetch(`https://www.googleapis.com/youtube/v3/videos?id=${videoId}&part=snippet,contentDetails,statistics&key=${CONST_YOUTUBE_API_KEY}`)
 
         const titleResponse: IYoutubeDataApiResponse = await resTitle.json();
         return NextResponse.json({

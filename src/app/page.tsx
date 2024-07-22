@@ -1,9 +1,9 @@
 'use client'
 
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { Button, Flex, Input, Select, Space, Card, App, Row, Col, Grid } from 'antd';
-import { CopyOutlined, MutedOutlined, SoundOutlined, ThunderboltOutlined } from '@ant-design/icons';
+import { Button, Input, Select, Space, App, Row, Col, Grid } from 'antd';
+import { ThunderboltOutlined } from '@ant-design/icons';
 
 import { TranscriptResponse } from 'youtube-transcript';
 
@@ -12,12 +12,11 @@ import { IYoutubeSearchResponseItem } from './api/yt-related/interface';
 
 import { grabYT, grabYTChannelRelatedVideos, grabYTVideoInfo, runGoogleAI } from './services/apis';
 import { checkLanguage, decodeHtmlEntities, extractVideoID } from './services/utils';
-import { populateVoiceList, IVoice, sayInput, stopSpeech } from './services/win';
 
 import FloatButtonComponent from './components/FloatButtonComponent';
-import TextZoomComponent from './components/TextZoomComponent';
 import TranscriptComponent from './components/TranscriptComponent';
 import RelatedVideosComponent from './components/RelatedVideosComponent';
+import SummaryComponent from './components/SummaryComponent';
 
 export default function Home() {
 
@@ -35,30 +34,26 @@ export default function Home() {
   const { message } = App.useApp();
   const screens = Grid.useBreakpoint();
 
-  const [voiceList, setVoiceList] = useState<IVoice[]>([]);
-  const [voice, setVoice] = useState('Mónica');
   const [summaryLength, setSummaryLength] = useState<string>('ultra-short');
 
   const [loading, setLoading] = useState(false);
   const [actionPerfomed, setActionPerfomed] = useState('')
-  const [playingAudio, setPlayingAudio] = useState(false);
 
   const [relatedVideos, setRelatedVideos] = useState<IYoutubeSearchResponseItem[]>([]);
 
   const [transcriptViewType, setTranscriptViewType] = useState<string>('concat');
   const [transcriptTimeline, setTranscriptTimeline] = useState<TranscriptResponse[]>([]);
 
-  useEffect(() => {
-    const fetchVoices = () => {
-      try {
-        const data = populateVoiceList();
-        setVoiceList(data || []);
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    fetchVoices();
-  }, []);
+  const summaryComponentRef = useRef<any>(null);
+
+  const handleStopSpeech = () => {
+    summaryComponentRef.current?.stopSpeechSummary();
+  };
+
+  const copyToClipboard = (text: string) => {
+    navigator.clipboard.writeText(text);
+    message.success(`Copied to clipboard`);
+  }
 
   const mergeTranscript = (ytResponse: TranscriptResponse[]) => {
     setActionPerfomed('Merging transcript...')
@@ -95,7 +90,7 @@ export default function Home() {
     setActionPerfomed('Getting video data...')
     setMergedTranscript('');
     setSummary('');
-    stopSpeechSummary()
+    handleStopSpeech()
 
     const url = fullURL ? extractVideoID(fullURL) : extractVideoID(ytUrl);
     const ytResponse = await grabYT(url);
@@ -134,20 +129,6 @@ export default function Home() {
     }
   }
 
-  const playSpeechSummary = (summary: string, voice: string) => {
-    sayInput(summary, voice);
-    setPlayingAudio(true);
-  }
-
-  const stopSpeechSummary = () => {
-    stopSpeech();
-    setPlayingAudio(false);
-  }
-  const copyToClipboard = (text: string) => {
-    navigator.clipboard.writeText(text);
-    message.success(`Copied to clipboard`);
-  }
-
   const fetchYTVideoRelated = async (videoId: string) => {
     const res = await grabYTChannelRelatedVideos(videoId, 15);
     if (res.status && res.data?.items && res.data?.items.length > 0) {
@@ -167,7 +148,7 @@ export default function Home() {
       setActionPerfomed('')
       setMergedTranscript('');
       setSummary('');
-      stopSpeechSummary()
+      handleStopSpeech()
       setRelatedVideos([]);
     }
   }, [ytUrl])
@@ -177,7 +158,7 @@ export default function Home() {
     setActionPerfomed('')
     setMergedTranscript('');
     setSummary('');
-    stopSpeechSummary()
+    handleStopSpeech()
     setRelatedVideos([]);
   }
 
@@ -205,29 +186,7 @@ export default function Home() {
             <Button type="primary" onClick={() => callGrabYT()} loading={loading} icon={<ThunderboltOutlined />} disabled={ytUrl === ''}>{loading ? actionPerfomed : (screens.xs ? '' : 'Get Summary')}</Button>
           </Space.Compact>
 
-          {summary !== '' &&
-            <Card size="small" style={{ marginTop: 10 }} title={<Flex gap='small'>
-              <div>Summary</div>
-            </Flex>} extra={
-
-              <Flex gap='small' justify='flex-end'>
-                <Select
-                  size='small'
-                  defaultValue={voice}
-                  popupMatchSelectWidth={false}
-                  onChange={(value) => setVoice(value)}
-                  options={voiceList.map((voice) => ({ label: `${voice.name} [${voice.lang}]`, value: voice.name }))}
-                />
-                {!playingAudio && <Button size='small' type="default" onClick={() => playSpeechSummary(summary, voice)} icon={<SoundOutlined />}>Play</Button>}
-                {playingAudio && <Button size='small' type="default" onClick={() => stopSpeechSummary()} danger icon={<MutedOutlined />}>Stop</Button>}
-                <TextZoomComponent summaryText={summary} />
-                <Button size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(summary)} ></Button>
-              </Flex>
-
-            }>
-              <div dangerouslySetInnerHTML={{ __html: summary }} style={{ height: 'auto' }}></div>
-            </Card>
-          }
+          <SummaryComponent ref={summaryComponentRef} summary={summary} copyToClipboard={copyToClipboard} />
 
           <TranscriptComponent mergedTranscript={mergedTranscript} videoData={videoData} transcriptTimeline={transcriptTimeline} transcriptViewType={transcriptViewType} setTranscriptViewType={setTranscriptViewType} copyToClipboard={copyToClipboard} />
 

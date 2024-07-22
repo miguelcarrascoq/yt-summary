@@ -5,7 +5,7 @@ import { FloatButton, Modal, QRCode } from 'antd'
 import React, { useState } from 'react'
 import useOrigin from '../hooks/origin'
 import { openInNewTab, webShare } from '../services/utils'
-import { CONST_APP_URL, CONST_INIT_YTID } from '../services/constants'
+import { CONST_APP_URL, CONST_INIT_YTID, CONST_REPO_URL } from '../services/constants'
 
 const FloatButtonComponent = () => {
 
@@ -36,7 +36,7 @@ const FloatButtonComponent = () => {
                 style={{ right: 24 }}
                 icon={<MoreOutlined />}
             >
-                <FloatButton tooltip="GitHub repo" icon={<GithubOutlined />} onClick={() => openInNewTab(process.env.NEXT_PUBLIC_REPO ?? 'https://github.com/miguelcarrascoq/yt-summary')} />
+                <FloatButton tooltip="GitHub repo" icon={<GithubOutlined />} onClick={() => openInNewTab(CONST_REPO_URL)} />
                 <FloatButton tooltip="QR to scan" icon={<QrcodeOutlined />} onClick={showModal} />
                 <FloatButton tooltip="Share this page" icon={<ShareAltOutlined />} onClick={triggerShare} />
                 <FloatButton tooltip="Help" icon={<QuestionOutlined />} onClick={showModal} />

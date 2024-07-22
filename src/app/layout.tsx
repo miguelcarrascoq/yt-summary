@@ -4,6 +4,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { App, ConfigProvider } from 'antd';
 import theme from './media/themeConfig';
 import { GoogleAnalytics } from '@next/third-parties/google'
+import { CONST_APP_URL } from './services/constants';
 
 export const metadata: Metadata = {
   title: "📺 Youtube summary",
@@ -13,10 +14,10 @@ export const metadata: Metadata = {
     description: "Summarize YouTube videos with AI",
     type: "website",
     locale: "en_US",
-    url: `${process.env.NEXT_PUBLIC_APP_URL}`,
+    url: `${CONST_APP_URL}`,
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_APP_URL}/opengraph-image.jpg`,
+        url: `${CONST_APP_URL}/opengraph-image.jpg`,
         width: 1200,
         height: 630,
         alt: "📺 Youtube summary",
@@ -28,7 +29,7 @@ export const metadata: Metadata = {
     description: "Summarize YouTube videos with AI",
     images: [
       {
-        url: `${process.env.NEXT_PUBLIC_APP_URL}/opengraph-image.jpg`,
+        url: `${CONST_APP_URL}/opengraph-image.jpg`,
         width: 1200,
         height: 630,
         alt: "📺 Youtube summary",

@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse, userAgent } from 'next/server';
+import { CONST_APP_URL } from './app/services/constants';
 
 const allowedOrigins = [
-  process.env.NEXT_PUBLIC_APP_URL,
+  CONST_APP_URL,
   // 'http://localhost:3000',
 ];
 

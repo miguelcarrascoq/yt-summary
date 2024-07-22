@@ -5,6 +5,7 @@ import { FloatButton, Modal, QRCode } from 'antd'
 import React, { useState } from 'react'
 import useOrigin from '../hooks/origin'
 import { openInNewTab, webShare } from '../services/utils'
+import { CONST_APP_URL } from '../services/constants'
 
 const FloatButtonComponent = () => {
 
@@ -24,7 +25,7 @@ const FloatButtonComponent = () => {
     };
 
     const triggerShare = () => {
-        webShare('Youtube Summary', 'Summarize YouTube videos with AI', process.env.NEXT_PUBLIC_APP_URL ?? 'https://yt-summary-next.vercel.app');
+        webShare('Youtube Summary', 'Summarize YouTube videos with AI', CONST_APP_URL);
     }
 
     return (

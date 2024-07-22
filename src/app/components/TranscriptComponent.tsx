@@ -40,7 +40,7 @@ const TranscriptComponent = (
                                 { label: 'Timeline', value: 'timeline', icon: <FieldTimeOutlined /> },
                             ]}
                         />
-                        <Button size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(`${videoData.title}: ${mergedTranscript}. Video from: https://www.youtube.com/watch?v=${videoData.videoId}`)} />
+                        <Button size="small" icon={<CopyOutlined />} onClick={() => copyToClipboard(`${videoData.title}: ${mergedTranscript}. Video: https://www.youtube.com/watch?v=${videoData.videoId}`)} />
                     </Flex>
                 }>
                     <Flex gap='small'>

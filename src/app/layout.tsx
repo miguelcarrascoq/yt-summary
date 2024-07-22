@@ -4,7 +4,7 @@ import { AntdRegistry } from '@ant-design/nextjs-registry';
 import { App, ConfigProvider } from 'antd';
 import theme from './media/themeConfig';
 import { GoogleAnalytics } from '@next/third-parties/google'
-import { CONST_APP_URL } from './services/constants';
+import { CONST_APP_URL, CONST_GOOGLE_ANALYTICS_ID } from './services/constants';
 
 export const metadata: Metadata = {
   title: "📺 Youtube summary",
@@ -53,7 +53,7 @@ export default function RootLayout({
             </App>
           </AntdRegistry>
         </body>
-        <GoogleAnalytics gaId={process.env.NEXT_PUBLIC_GOOGLE_ANALYTICS_ID ?? ''} />
+        <GoogleAnalytics gaId={CONST_GOOGLE_ANALYTICS_ID} />
       </html>
     </ConfigProvider>
   );

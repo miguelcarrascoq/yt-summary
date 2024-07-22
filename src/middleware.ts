@@ -44,10 +44,12 @@ export function middleware(request: NextRequest) {
   // { vendor: undefined, model: undefined, type: undefined }
   // {vendor: "Apple", model: "Macintosh"}
   // {"model": "K", "type": "mobile"}
+  console.log(device);
 
   if (
     headerYTSummary !== process.env.NEXT_PUBLIC_CRYPTO_SECRET ||
-    device.type === 'console'
+    device.type === 'console' ||
+    device.vendor === undefined
   ) {
     return new Response(
       JSON.stringify({

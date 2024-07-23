@@ -7,6 +7,7 @@ export const CONST_APP_ALIVE = process.env.NEXT_PUBLIC_APP_ALIVE === 'true' ? tr
 export const CONST_GOOGLE_API_KEY = process.env.NEXT_PUBLIC_GOOGLE_API_KEY ?? ''
 export const CONST_YOUTUBE_API_KEY = process.env.NEXT_PUBLIC_YOUTUBE_API_KEY ?? ''
 export const CONST_OPENAI_API_KEY = process.env.NEXT_PUBLIC_OPENAI_API_KEY ?? ''
+export const CONST_PROMPT_CHARS_LENGTH = Number(process.env.NEXT_PUBLIC_PROMPT_CHARS_LENGTH) ?? 150000
 
 export const primaryColor = '#B70283';
 

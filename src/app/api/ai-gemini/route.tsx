@@ -1,8 +1,12 @@
-import { CONST_GOOGLE_API_KEY, CONST_PROMPT_CHARS_LENGTH } from '@/app/services/constants';
+import { CONST_GOOGLE_API_KEY, CONST_PROMPT_CHARS_LENGTH, CONST_USE_USER_API_KEY } from '@/app/services/constants';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
+import { headers } from 'next/headers'
 
 export async function POST(request: NextRequest) {
+    const headersList = headers();
+    const userApiKey = headersList.get("X-User-Api-Key");
+
     const data = await request.json();
     const inputPrompt = data['prompt']
     const inputSummaryLength = data['summaryLength'] ?? 'ultra-short';
@@ -16,7 +20,8 @@ export async function POST(request: NextRequest) {
     }
 
     try {
-        const genAI = new GoogleGenerativeAI(CONST_GOOGLE_API_KEY);
+        const apiKey = CONST_USE_USER_API_KEY ? userApiKey : CONST_GOOGLE_API_KEY;
+        const genAI = new GoogleGenerativeAI(apiKey ?? '');
 
         const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 

@@ -3,7 +3,8 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { TranscriptResponse } from 'youtube-transcript';
 import { IVideoDataResponse } from '../api/video-info/interface';
 import { IVideoSearchResponse } from '../api/yt-related/interface';
-import { CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY } from './constants';
+import { CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY, CONST_USE_USER_API_KEY } from './constants';
+import { headers } from 'next/headers';
 
 export const runOpenAI = async () => {
 
@@ -18,13 +19,16 @@ export const runOpenAI = async () => {
     console.log(text);
 }
 
-export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra-short', lang: string = 'en'): Promise<{ status: boolean, transcript: string, message: string }> => {
+export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra-short', lang: string = 'en', clientApiKey?: string): Promise<{ status: boolean, transcript: string, message: string }> => {
+    const headers = new Headers();
+    headers.set('Content-Type', 'application/json');
+    headers.set('X-Yt-Summary', CONST_CRYPTO_SECRET);
+    if (clientApiKey && CONST_USE_USER_API_KEY) {
+        headers.set('X-User-Api-Key', clientApiKey);
+    }
     const res = await fetch(`/api/ai-gemini`, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-Yt-Summary': CONST_CRYPTO_SECRET
-        },
+        headers: headers,
         body: JSON.stringify({
             prompt: prompt,
             summaryLength: summaryLength,
@@ -43,20 +47,26 @@ export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => 
     return res.json();
 }
 
-export const grabYTVideoInfo = async (videoId: string): Promise<IVideoDataResponse> => {
+export const grabYTVideoInfo = async (videoId: string, clientApiKey?: string): Promise<IVideoDataResponse> => {
+    const headers = new Headers();
+    headers.set('X-Yt-Summary', CONST_CRYPTO_SECRET);
+    if (clientApiKey && CONST_USE_USER_API_KEY) {
+        headers.set('X-User-Api-Key', clientApiKey);
+    }
     const res = await fetch(`/api/video-info?videoId=${videoId}`, {
-        headers: {
-            'X-Yt-Summary': CONST_CRYPTO_SECRET
-        }
+        headers: headers
     });
     return res.json();
 }
 
-export const grabYTChannelRelatedVideos = async (channelId: string, maxResults: number = 10): Promise<IVideoSearchResponse> => {
+export const grabYTChannelRelatedVideos = async (channelId: string, maxResults: number = 10, clientApiKey?: string): Promise<IVideoSearchResponse> => {
+    const headers = new Headers();
+    headers.set('X-Yt-Summary', CONST_CRYPTO_SECRET);
+    if (clientApiKey && CONST_USE_USER_API_KEY) {
+        headers.set('X-User-Api-Key', clientApiKey);
+    }
     const res = await fetch(`/api/yt-related?channelId=${channelId}&maxResults=${maxResults}`, {
-        headers: {
-            'X-Yt-Summary': CONST_CRYPTO_SECRET
-        }
+        headers: headers
     });
     return res.json();
 }

@@ -2,7 +2,7 @@
 
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 
-import { App, Row, Col, Grid } from 'antd';
+import { App, Row, Col, Grid, Typography, Flex } from 'antd';
 
 import { TranscriptResponse } from 'youtube-transcript';
 
@@ -18,7 +18,10 @@ import RelatedVideosComponent from '../components/RelatedVideosComponent';
 import SummaryComponent from '../components/SummaryComponent';
 import SearchComponent from '../components/SearchComponent';
 import PageNotAvailable from '../components/PageNotAvailable';
-import { CONST_APP_ALIVE, CONST_INIT_YTID } from '../services/constants';
+import { CONST_APP_ALIVE, CONST_INIT_YTID, CONST_USE_USER_API_KEY, primaryColor } from '../services/constants';
+import { sendGAEvent } from '@next/third-parties/google'
+import { ApiKeysStore } from '../sotre/keys';
+import Link from 'antd/es/typography/Link';
 
 const HomeComponent = () => {
 
@@ -47,6 +50,9 @@ const HomeComponent = () => {
     const [transcriptTimeline, setTranscriptTimeline] = useState<TranscriptResponse[]>([]);
 
     const summaryComponentRef = useRef<any>(null);
+    const floatButtonComponentRef = useRef<any>(null);
+
+    const { googleApiKey, youtubeApiKey } = ApiKeysStore()
 
     const handleStopSpeech = () => {
         summaryComponentRef.current?.stopSpeechSummary();
@@ -72,7 +78,7 @@ const HomeComponent = () => {
         setActionPerfomed('Running AI...')
         setLoading(true);
 
-        const result = await runGoogleAI(mergedTranscript, summaryLength, langFromVideo);
+        const result = await runGoogleAI(mergedTranscript, summaryLength, langFromVideo, googleApiKey);
         if (!result.status) {
             message.error(result.message);
             setLoading(false);
@@ -85,7 +91,7 @@ const HomeComponent = () => {
         if (channelId !== undefined) {
             fetchYTVideoRelated(channelId)
         }
-    }, [message]);
+    }, [googleApiKey, message]);
 
     const callGrabYT = useCallback(async (fullURL?: string, generateSummary: boolean = true) => {
         setLoading(true);
@@ -94,10 +100,16 @@ const HomeComponent = () => {
         setSummary('');
         handleStopSpeech()
 
+        sendGAEvent({
+            event: 'buttonGrabYTClicked', value: {
+                fullURL: fullURL,
+            }
+        })
+
         const url = fullURL ? extractVideoID(fullURL) : extractVideoID(ytUrl);
         const ytResponse = await grabYT(url);
         setTranscriptTimeline(ytResponse)
-        const ytTitleResponse = await grabYTVideoInfo(url);
+        const ytTitleResponse = await grabYTVideoInfo(url, youtubeApiKey);
         if (!ytTitleResponse.status) {
             message.error('Error getting video info');
             setLoading(false);
@@ -118,7 +130,7 @@ const HomeComponent = () => {
             setLoading(false);
             setActionPerfomed('')
         }
-    }, [callRunGoogleAI, message, summaryLength, ytUrl]);
+    }, [callRunGoogleAI, message, summaryLength, youtubeApiKey, ytUrl]);
 
     const onChangeInput = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const url = e.target.value;
@@ -132,7 +144,7 @@ const HomeComponent = () => {
     }
 
     const fetchYTVideoRelated = async (videoId: string) => {
-        const res = await grabYTChannelRelatedVideos(videoId, 15);
+        const res = await grabYTChannelRelatedVideos(videoId, 15, youtubeApiKey);
         if (res.status && res.data?.items && res.data?.items.length > 0) {
             setRelatedVideos(res.data?.items);
         } else {
@@ -170,6 +182,13 @@ const HomeComponent = () => {
                         </Col>
                         <Col md={12} xs={24}>
 
+                            {
+                                CONST_USE_USER_API_KEY &&
+                                <Flex justify='center' style={{ paddingBottom: 16 }}>
+                                    <Typography.Text>Set your API KEYs <Link style={{ color: primaryColor }} onClick={() => floatButtonComponentRef.current?.setIsModalOpenQRCustomApiKey()}>here</Link></Typography.Text>
+                                </Flex>
+                            }
+
                             <SearchComponent ytUrl={ytUrl} setYtUrl={setYtUrl} initURL={initURL} callGrabYT={callGrabYT} loading={loading} actionPerfomed={actionPerfomed} handleKeyDown={handleKeyDown} onChangeInput={onChangeInput} summaryLength={summaryLength} setSummaryLength={setSummaryLength} />
 
                             <SummaryComponent ref={summaryComponentRef} summary={summary} copyToClipboard={copyToClipboard} />
@@ -184,7 +203,7 @@ const HomeComponent = () => {
                         </Col>
                     </Row>
 
-                    <FloatButtonComponent />
+                    <FloatButtonComponent ref={floatButtonComponentRef} />
                 </div>
             ) : (
                 <PageNotAvailable />

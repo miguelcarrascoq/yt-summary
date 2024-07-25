@@ -74,6 +74,15 @@ const HomeComponent = () => {
         return decodeHtml
     }
 
+    const fetchYTVideoRelated = useCallback(async (videoId: string) => {
+        const res = await grabYTChannelRelatedVideos(videoId, 15, youtubeApiKey);
+        if (res.status && res.data?.items && res.data?.items.length > 0) {
+            setRelatedVideos(res.data?.items);
+        } else {
+            setRelatedVideos([]);
+        }
+    }, [youtubeApiKey, setRelatedVideos]);
+
     const callRunGoogleAI = useCallback(async (mergedTranscript: string, summaryLength: string, langFromVideo: string, channelId?: string) => {
         setActionPerfomed('Running AI...')
         setLoading(true);
@@ -91,7 +100,7 @@ const HomeComponent = () => {
         if (channelId !== undefined) {
             fetchYTVideoRelated(channelId)
         }
-    }, [googleApiKey, message]);
+    }, [fetchYTVideoRelated, googleApiKey, message]);
 
     const callGrabYT = useCallback(async (fullURL?: string, generateSummary: boolean = true) => {
         setLoading(true);
@@ -140,15 +149,6 @@ const HomeComponent = () => {
     const handleKeyDown = (event: { key: string; }) => {
         if (event.key === 'Enter') {
             callGrabYT()
-        }
-    }
-
-    const fetchYTVideoRelated = async (videoId: string) => {
-        const res = await grabYTChannelRelatedVideos(videoId, 15, youtubeApiKey);
-        if (res.status && res.data?.items && res.data?.items.length > 0) {
-            setRelatedVideos(res.data?.items);
-        } else {
-            setRelatedVideos([]);
         }
     }
 

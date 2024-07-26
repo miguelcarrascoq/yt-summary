@@ -1,4 +1,4 @@
-Get a summary of a youtube video using AI. Check the [demo](https://yt-summary-next.vercel.app/).
+Get a summary of a youtube video using AI. Check the [live demo](https://yt-summary-next.vercel.app/).
 
 ![Preview](public/images/preview.jpg)
 
@@ -13,7 +13,7 @@ Create an environment file `cp .env.example .env.local` and set the following va
 
 Run the development server: `npm run dev`
 
-![Demo](public/images/demo.gif)
+<video src="https://github.com/user-attachments/assets/d0c3580a-7cbc-4ab1-ad04-42d4e35166bc" width="352" height="720"></video>
 
 ## TODO
 

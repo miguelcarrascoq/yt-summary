@@ -6,12 +6,15 @@ import theme from './media/themeConfig';
 import { GoogleAnalytics } from '@next/third-parties/google'
 import { CONST_APP_URL, CONST_GOOGLE_ANALYTICS_ID } from './services/constants';
 
+const title = "📺 YT Summary"
+const description = "Summarize YouTube videos with AI";
+
 export const metadata: Metadata = {
-  title: "📺 Youtube summary",
-  description: "Summarize YouTube videos with AI",
+  title: title,
+  description: description,
   openGraph: {
-    title: "📺 Youtube summary",
-    description: "Summarize YouTube videos with AI",
+    title: title,
+    description: description,
     type: "website",
     locale: "en_US",
     url: `${CONST_APP_URL}`,
@@ -20,19 +23,19 @@ export const metadata: Metadata = {
         url: `${CONST_APP_URL}/opengraph-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "📺 Youtube summary",
+        alt: title,
       },
     ],
   },
   twitter: {
-    title: "📺 Youtube summary",
-    description: "Summarize YouTube videos with AI",
+    title: title,
+    description: description,
     images: [
       {
         url: `${CONST_APP_URL}/opengraph-image.jpg`,
         width: 1200,
         height: 630,
-        alt: "📺 Youtube summary",
+        alt: title,
       },
     ],
   }

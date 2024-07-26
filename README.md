@@ -4,7 +4,7 @@ Get a summary of a youtube video using AI. Check the [demo](https://yt-summary-n
 
 ## Getting Started
 
-Do you need a **YouTube Data API v3** key, a **Generative Language API** key and/or an **OpenAI** key.
+Do you need a **YouTube Data API v3** key & a **Generative Language API** key.
 
 Create an environment file `cp .env.example .env.local` and set the following variables:
 
@@ -12,6 +12,8 @@ Create an environment file `cp .env.example .env.local` and set the following va
 - **NEXT_PUBLIC_YOUTUBE_API_KEY** is the API key for Google (YouTube Data API v3).
 
 Run the development server: `npm run dev`
+
+<video src="/videos/demo.mp4" width="352" height="720" controls></video>
 
 ## TODO
 

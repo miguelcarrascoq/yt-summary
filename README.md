@@ -13,7 +13,7 @@ Create an environment file `cp .env.example .env.local` and set the following va
 
 Run the development server: `npm run dev`
 
-<video src="public/videos/demo.mp4" width="352" height="720" controls></video>
+<video src="https://www.visitanyplace.com/github/yt-summary/demo.mp4" width="352" height="720" controls></video>
 
 ## TODO
 

@@ -13,7 +13,7 @@ Create an environment file `cp .env.example .env.local` and set the following va
 
 Run the development server: `npm run dev`
 
-[![Video Demo](https://img.youtube.com/vi/pSDKd6i6Riw/0.jpg)](https://www.youtube.com/watch?v=pSDKd6i6Riw)
+<img src="https://www.visitanyplace.com/github/yt-summary/demo.gif" width="352" height="720">
 
 ## TODO
 

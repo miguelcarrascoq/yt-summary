@@ -20,7 +20,7 @@ import SearchComponent from '../components/SearchComponent';
 import PageNotAvailable from '../components/PageNotAvailable';
 import { CONST_APP_ALIVE, CONST_INIT_YTID, CONST_USE_USER_API_KEY, primaryColor } from '../services/constants';
 import { sendGAEvent } from '@next/third-parties/google'
-import { ApiKeysStore } from '../sotre/keys';
+import { ApiKeysStore } from '../store/keys';
 import Link from 'antd/es/typography/Link';
 
 const HomeComponent = () => {

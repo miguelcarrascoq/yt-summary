@@ -2,7 +2,7 @@
 
 import React, { useEffect } from 'react'
 import { Card, Form, Input } from 'antd'
-import { ApiKeysStore } from '../sotre/keys';
+import { ApiKeysStore } from '../store/keys';
 
 const ConfigComponent = () => {
     const [form] = Form.useForm();

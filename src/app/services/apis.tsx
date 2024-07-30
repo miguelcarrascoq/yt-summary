@@ -4,7 +4,7 @@ import { TranscriptResponse } from 'youtube-transcript';
 import { IVideoDataResponse } from '../api/video-info/interface';
 import { IVideoSearchResponse } from '../api/yt-related/interface';
 import { CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY, CONST_USE_USER_API_KEY } from './constants';
-import { headers } from 'next/headers';
+import { compress } from 'lz-string'
 
 export const runOpenAI = async () => {
 
@@ -30,7 +30,7 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
-            prompt: prompt,
+            prompt: compress(prompt),
             summaryLength: summaryLength,
             lang: lang
         })

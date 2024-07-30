@@ -22,6 +22,7 @@ import { CONST_APP_ALIVE, CONST_INIT_YTID, CONST_USE_USER_API_KEY, primaryColor 
 import { sendGAEvent } from '@next/third-parties/google'
 import { ApiKeysStore } from '../store/keys';
 import Link from 'antd/es/typography/Link';
+import { compress, decompress } from 'lz-string'
 
 const HomeComponent = () => {
 
@@ -94,7 +95,7 @@ const HomeComponent = () => {
             setActionPerfomed('')
             return;
         }
-        setSummary(result.transcript);
+        setSummary(decompress(result.transcript));
         setLoading(false);
         setActionPerfomed('')
         if (channelId !== undefined) {

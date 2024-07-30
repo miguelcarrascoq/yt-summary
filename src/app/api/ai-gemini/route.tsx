@@ -2,13 +2,14 @@ import { CONST_GOOGLE_API_KEY, CONST_PROMPT_CHARS_LENGTH, CONST_USE_USER_API_KEY
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers'
+import { compress, decompress } from 'lz-string'
 
 export async function POST(request: NextRequest) {
     const headersList = headers();
     const userApiKey = headersList.get("X-User-Api-Key");
 
     const data = await request.json();
-    const inputPrompt = data['prompt']
+    const inputPrompt = decompress(data['prompt'])
     const inputSummaryLength = data['summaryLength'] ?? 'ultra-short';
     const inputLang = data['lang'] ?? 'es';
 
@@ -88,7 +89,7 @@ export async function POST(request: NextRequest) {
 
         return NextResponse.json({
             status: true,
-            transcript: result.response.text()
+            transcript: compress(result.response.text())
         });
     } catch (error) {
         return NextResponse.json({

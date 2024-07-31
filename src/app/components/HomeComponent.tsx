@@ -18,7 +18,7 @@ import RelatedVideosComponent from '../components/RelatedVideosComponent';
 import SummaryComponent from '../components/SummaryComponent';
 import SearchComponent from '../components/SearchComponent';
 import PageNotAvailable from '../components/PageNotAvailable';
-import { CONST_APP_ALIVE, CONST_INIT_YTID, CONST_USE_USER_API_KEY, primaryColor } from '../services/constants';
+import { CONST_APP_ALIVE, CONST_COMPRESS_RESPONSE, CONST_INIT_YTID, CONST_USE_USER_API_KEY, primaryColor } from '../services/constants';
 import { sendGAEvent } from '@next/third-parties/google'
 import { ApiKeysStore } from '../store/keys';
 import Link from 'antd/es/typography/Link';
@@ -95,7 +95,7 @@ const HomeComponent = () => {
             setActionPerfomed('')
             return;
         }
-        setSummary(decompress(result.transcript));
+        setSummary(CONST_COMPRESS_RESPONSE ? decompress(result.transcript) : result.transcript);
         setLoading(false);
         setActionPerfomed('')
         if (channelId !== undefined) {

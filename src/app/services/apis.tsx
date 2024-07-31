@@ -3,7 +3,7 @@ import { createOpenAI } from '@ai-sdk/openai';
 import { TranscriptResponse } from 'youtube-transcript';
 import { IVideoDataResponse } from '../api/video-info/interface';
 import { IVideoSearchResponse } from '../api/yt-related/interface';
-import { CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY, CONST_USE_USER_API_KEY } from './constants';
+import { CONST_COMPRESS_RESPONSE, CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY, CONST_USE_USER_API_KEY } from './constants';
 import { compress } from 'lz-string'
 
 export const runOpenAI = async () => {
@@ -30,7 +30,7 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra
         method: 'POST',
         headers: headers,
         body: JSON.stringify({
-            prompt: compress(prompt),
+            prompt: CONST_COMPRESS_RESPONSE ? compress(prompt) : prompt,
             summaryLength: summaryLength,
             lang: lang
         })

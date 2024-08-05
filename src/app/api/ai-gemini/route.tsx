@@ -1,8 +1,10 @@
 import { CONST_COMPRESS_RESPONSE, CONST_GOOGLE_API_KEY, CONST_PROMPT_CHARS_LENGTH, CONST_USE_USER_API_KEY } from '@/app/services/constants';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { createGoogleGenerativeAI } from '@ai-sdk/google';
+import { LanguageModelV1 } from '@ai-sdk/provider';
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers'
 import { compress, decompress } from 'lz-string'
+import { generateText } from 'ai';
 
 export async function POST(request: NextRequest) {
     const headersList = headers();
@@ -22,9 +24,11 @@ export async function POST(request: NextRequest) {
 
     try {
         const apiKey = CONST_USE_USER_API_KEY ? userApiKey : CONST_GOOGLE_API_KEY;
-        const genAI = new GoogleGenerativeAI(apiKey ?? '');
+        const google = createGoogleGenerativeAI({
+            apiKey: apiKey ?? ''
+        });
 
-        const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+        const model = google('models/gemini-1.5-flash-latest') as LanguageModelV1;
 
         let extensionMin;
         let extensionMax;
@@ -85,11 +89,14 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        const result = await model.generateContent([prompt]);
+        const result = await generateText({
+            model: model,
+            prompt: prompt,
+        })
 
         return NextResponse.json({
             status: true,
-            transcript: CONST_COMPRESS_RESPONSE ? compress(result.response.text()) : result.response.text()
+            transcript: CONST_COMPRESS_RESPONSE ? compress(result.text) : result.text
         });
     } catch (error) {
         return NextResponse.json({

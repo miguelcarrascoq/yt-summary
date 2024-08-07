@@ -1,5 +1,6 @@
-import { TranscriptResponse, YoutubeTranscript } from 'youtube-transcript';
+// import { TranscriptResponse, YoutubeTranscript } from 'youtube-transcript';
 import { NextRequest, NextResponse } from 'next/server';
+import { TranscriptResponse, YoutubeTranscript } from './youtube-transcript';
 
 export async function GET(request: NextRequest) {
     const videoId = request.nextUrl.searchParams.get('videoId');

@@ -10,7 +10,7 @@ export async function GET(request: NextRequest) {
         const transcript: TranscriptResponse[] = await YoutubeTranscript.fetchTranscript(videoId);
         return NextResponse.json(transcript);
     } catch (error) {
-        return NextResponse.json([{ text: 'Failed to fetch transcript' }]);
+        return NextResponse.json([{ text: 'Failed to fetch transcript', error: error }]);
     }
 
 }

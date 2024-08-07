@@ -4,8 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { App, Row, Col, Grid, Typography, Flex } from 'antd';
 
-import { TranscriptResponse } from 'youtube-transcript';
-
 import { IVideoData } from '../api/video-info/interface';
 import { IYoutubeSearchResponseItem } from '../api/yt-related/interface';
 
@@ -23,6 +21,7 @@ import { sendGAEvent } from '@next/third-parties/google'
 import { ApiKeysStore } from '../store/keys';
 import Link from 'antd/es/typography/Link';
 import { compress, decompress } from 'lz-string'
+import { ITranscriptCaption } from '../api/transcript/interface';
 
 const HomeComponent = () => {
 
@@ -48,7 +47,7 @@ const HomeComponent = () => {
     const [relatedVideos, setRelatedVideos] = useState<IYoutubeSearchResponseItem[]>([]);
 
     const [transcriptViewType, setTranscriptViewType] = useState<string>('concat');
-    const [transcriptTimeline, setTranscriptTimeline] = useState<TranscriptResponse[]>([]);
+    const [transcriptTimeline, setTranscriptTimeline] = useState<ITranscriptCaption[]>([]);
 
     const summaryComponentRef = useRef<any>(null);
     const floatButtonComponentRef = useRef<any>(null);
@@ -64,7 +63,7 @@ const HomeComponent = () => {
         message.success(`Copied to clipboard`);
     }
 
-    const mergeTranscript = (ytResponse: TranscriptResponse[]) => {
+    const mergeTranscript = (ytResponse: ITranscriptCaption[]) => {
         setActionPerfomed('Merging transcript...')
         let mergedTranscript = '';
         ytResponse.forEach((transcript) => {
@@ -117,8 +116,6 @@ const HomeComponent = () => {
         })
 
         const url = fullURL ? extractVideoID(fullURL) : extractVideoID(ytUrl);
-        const ytResponse = await grabYT(url);
-        setTranscriptTimeline(ytResponse)
         const ytTitleResponse = await grabYTVideoInfo(url, youtubeApiKey);
         if (!ytTitleResponse.status) {
             message.error('Error getting video info');
@@ -126,15 +123,17 @@ const HomeComponent = () => {
             setActionPerfomed('')
             return
         }
+        const ytResponse = await grabYT(url, ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? 'en');
+        setTranscriptTimeline(ytResponse.captions)
         setVideoData({
             videoId: url,
             title: ytTitleResponse.data?.title ?? '',
             thumbnail: ytTitleResponse.data?.thumbnail ?? '',
             extra: ytTitleResponse.data?.extra
         });
-        const mergedTranscript = mergeTranscript(ytResponse)
+        const mergedTranscript = mergeTranscript(ytResponse.captions)
         if (generateSummary) {
-            const langFromVideo = checkLanguage(ytResponse[0].lang ?? (ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? 'en'));
+            const langFromVideo = checkLanguage(ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? 'en');
             callRunGoogleAI(mergedTranscript, summaryLength, langFromVideo, ytTitleResponse.data?.extra?.items[0]?.snippet?.channelId);
         } else {
             setLoading(false);

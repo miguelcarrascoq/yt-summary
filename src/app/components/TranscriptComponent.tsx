@@ -6,8 +6,8 @@ import React from 'react'
 import Image from 'next/image'
 import { convertSecondsToTime, convertYouTubeDuration, formatNumber, openInNewTab } from '../services/utils'
 import { primaryColor, primaryColorCSS } from '../services/constants'
-import { TranscriptResponse } from 'youtube-transcript'
 import { IVideoData } from '../api/video-info/interface'
+import { ITranscriptCaption } from '../api/transcript/interface'
 
 const TranscriptComponent = (
     {
@@ -22,7 +22,7 @@ const TranscriptComponent = (
         transcriptViewType: string,
         setTranscriptViewType: (value: string) => void,
         mergedTranscript: string,
-        transcriptTimeline: TranscriptResponse[],
+        transcriptTimeline: ITranscriptCaption[],
         copyToClipboard: (text: string) => void,
     }
 ) => {
@@ -81,8 +81,8 @@ const TranscriptComponent = (
                                                     children:
                                                         <Flex>
                                                             <Button size="small" type="primary"
-                                                                onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}&t=${transcript.offset}s`)}>
-                                                                {convertSecondsToTime(transcript.offset)}
+                                                                onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}&t=${Number(transcript.dur)}s`)}>
+                                                                {convertSecondsToTime(Number(transcript.dur))}
                                                             </Button>&nbsp;&nbsp;
                                                             <div dangerouslySetInnerHTML={{ __html: transcript.text }}></div>
                                                         </Flex>

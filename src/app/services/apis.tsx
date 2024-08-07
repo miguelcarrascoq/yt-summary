@@ -3,6 +3,7 @@ import { IVideoDataResponse } from '../api/video-info/interface';
 import { IVideoSearchResponse } from '../api/yt-related/interface';
 import { CONST_COMPRESS_RESPONSE, CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY, CONST_USE_USER_API_KEY } from './constants';
 import { compress } from 'lz-string'
+import { ITranscriptResponse } from '../api/transcript/interface';
 
 export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra-short', lang: string = 'en', clientApiKey?: string): Promise<{ status: boolean, transcript: string, message: string }> => {
     const headers = new Headers();
@@ -23,8 +24,8 @@ export const runGoogleAI = async (prompt: string, summaryLength: string = 'ultra
     return res.json();
 }
 
-export const grabYT = async (videoId: string): Promise<TranscriptResponse[]> => {
-    const res = await fetch(`/api/transcript?videoId=${videoId}`, {
+export const grabYT = async (videoId: string, lang = 'en'): Promise<ITranscriptResponse> => {
+    const res = await fetch(`/api/transcript?videoId=${videoId}&lang=${lang}`, {
         headers: {
             'X-Yt-Summary': CONST_CRYPTO_SECRET
         }

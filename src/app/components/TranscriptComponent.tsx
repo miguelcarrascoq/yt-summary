@@ -6,8 +6,8 @@ import React from 'react'
 import Image from 'next/image'
 import { convertSecondsToTime, convertYouTubeDuration, formatNumber, openInNewTab } from '../services/utils'
 import { primaryColor, primaryColorCSS } from '../services/constants'
-import { TranscriptResponse } from 'youtube-transcript'
 import { IVideoData } from '../api/video-info/interface'
+import { TranscriptResponse } from '../api/transcript/youtube-transcript'
 
 const TranscriptComponent = (
     {

@@ -4,8 +4,6 @@ import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import { App, Row, Col, Grid, Typography, Flex } from 'antd';
 
-import { TranscriptResponse } from 'youtube-transcript';
-
 import { IVideoData } from '../api/video-info/interface';
 import { IYoutubeSearchResponseItem } from '../api/yt-related/interface';
 
@@ -23,6 +21,7 @@ import { sendGAEvent } from '@next/third-parties/google'
 import { ApiKeysStore } from '../store/keys';
 import Link from 'antd/es/typography/Link';
 import { compress, decompress } from 'lz-string'
+import { TranscriptResponse } from '../api/transcript/youtube-transcript';
 
 const HomeComponent = () => {
 

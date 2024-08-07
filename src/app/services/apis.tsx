@@ -1,4 +1,4 @@
-import { TranscriptResponse } from 'youtube-transcript';
+import { TranscriptResponse } from '../api/transcript/youtube-transcript';
 import { IVideoDataResponse } from '../api/video-info/interface';
 import { IVideoSearchResponse } from '../api/yt-related/interface';
 import { CONST_COMPRESS_RESPONSE, CONST_CRYPTO_SECRET, CONST_OPENAI_API_KEY, CONST_USE_USER_API_KEY } from './constants';

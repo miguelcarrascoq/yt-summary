@@ -34,7 +34,7 @@ const RelatedVideosComponent = (
                     <Flex wrap gap="middle" justify='space-around' align='center'>
                         {relatedVideos.map((video, index) => (
                             <React.Fragment key={video?.id?.videoId?.toString()}>
-                                <Image alt={video.snippet.title} src={video.snippet.thumbnails.high.url} width={120} height={90} style={{ height: 'auto', width: 120, borderRadius: 8, border: `1px ${primaryColor} solid`, cursor: 'pointer' }}
+                                <Image unoptimized alt={video.snippet.title} src={video.snippet.thumbnails.high.url} width={120} height={90} style={{ height: 'auto', width: 120, borderRadius: 8, border: `1px ${primaryColor} solid`, cursor: 'pointer' }}
                                     onClick={() => {
                                         clearValues()
                                         const url = `https://www.youtube.com/watch?v=${video.id.videoId}`;

@@ -48,6 +48,7 @@ const TranscriptComponent = (
                             <Col md={8} xs={24}>
                                 <Flex vertical gap='small' align='center'>
                                     <Image
+                                        unoptimized
                                         width={120}
                                         height={90}
                                         src={videoData.extra?.items[0]?.snippet?.thumbnails?.high?.url ?? videoData.thumbnail}

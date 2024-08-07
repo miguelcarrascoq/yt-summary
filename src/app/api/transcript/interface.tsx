@@ -7,4 +7,5 @@ export interface ITranscriptCaption {
     dur: string;
     start: string;
     text: string;
+    total?: number
 }

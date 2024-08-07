@@ -82,7 +82,7 @@ const TranscriptComponent = (
                                                         <Flex>
                                                             <Button size="small" type="primary"
                                                                 onClick={() => openInNewTab(`https://www.youtube.com/watch?v=${videoData.videoId}&t=${Number(transcript.dur)}s`)}>
-                                                                {convertSecondsToTime(Number(transcript.dur))}
+                                                                {convertSecondsToTime(Number(transcript.total))}
                                                             </Button>&nbsp;&nbsp;
                                                             <div dangerouslySetInnerHTML={{ __html: transcript.text }}></div>
                                                         </Flex>

@@ -8,7 +8,7 @@ import { IVideoData } from '../api/video-info/interface';
 import { IYoutubeSearchResponseItem } from '../api/yt-related/interface';
 
 import { grabYT, grabYTChannelRelatedVideos, grabYTVideoInfo, runGoogleAI } from '../services/apis';
-import { checkLanguage, decodeHtmlEntities, extractVideoID } from '../services/utils';
+import { addAccumulatedTime, checkLanguage, decodeHtmlEntities, extractVideoID } from '../services/utils';
 
 import FloatButtonComponent from '../components/FloatButtonComponent';
 import TranscriptComponent from '../components/TranscriptComponent';
@@ -124,6 +124,7 @@ const HomeComponent = () => {
             return
         }
         const ytResponse = await grabYT(url, ytTitleResponse.data?.extra?.items[0]?.snippet?.defaultAudioLanguage ?? 'en');
+        ytResponse.captions = addAccumulatedTime(ytResponse)
         setTranscriptTimeline(ytResponse.captions)
         setVideoData({
             videoId: url,

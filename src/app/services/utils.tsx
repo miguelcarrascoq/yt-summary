@@ -1,4 +1,5 @@
 import { message } from 'antd';
+import { ITranscriptCaption, ITranscriptResponse } from '../api/transcript/interface';
 
 /**
  * Extracts the video ID from a YouTube URL.
@@ -178,4 +179,19 @@ export const formatNumber = (number: number) => {
     } else {
         return number.toString(); // No abbreviation
     }
+}
+
+
+export const addAccumulatedTime = (data: ITranscriptResponse): ITranscriptCaption[] => {
+    let accumulatedTime = 0;
+
+    data.captions = data.captions.map(caption => {
+        accumulatedTime += parseFloat(caption.dur);
+        return {
+            ...caption,
+            total: parseFloat(accumulatedTime.toFixed(3)) // Convert the accumulatedTime to a number
+        };
+    });
+
+    return data.captions;
 }

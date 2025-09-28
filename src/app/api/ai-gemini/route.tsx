@@ -1,10 +1,8 @@
 import { CONST_COMPRESS_RESPONSE, CONST_GOOGLE_API_KEY, CONST_PROMPT_CHARS_LENGTH, CONST_USE_USER_API_KEY } from '@/app/services/constants';
-import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { LanguageModelV1 } from '@ai-sdk/provider';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { headers } from 'next/headers'
 import { compress, decompress } from 'lz-string'
-import { generateText } from 'ai';
 
 export async function POST(request: NextRequest) {
     const headersList = headers();
@@ -24,11 +22,16 @@ export async function POST(request: NextRequest) {
 
     try {
         const apiKey = CONST_USE_USER_API_KEY ? userApiKey : CONST_GOOGLE_API_KEY;
-        const google = createGoogleGenerativeAI({
-            apiKey: apiKey ?? ''
-        });
 
-        const model = google('models/gemini-1.5-flash-latest') as LanguageModelV1;
+        if (!apiKey) {
+            return NextResponse.json({
+                status: false,
+                message: 'API key is required'
+            });
+        }
+
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
 
         let extensionMin;
         let extensionMax;
@@ -89,16 +92,16 @@ export async function POST(request: NextRequest) {
             });
         }
 
-        const result = await generateText({
-            model: model,
-            prompt: prompt,
-        })
+        const result = await model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
 
         return NextResponse.json({
             status: true,
-            transcript: CONST_COMPRESS_RESPONSE ? compress(result.text) : result.text
+            transcript: CONST_COMPRESS_RESPONSE ? compress(text) : text
         });
     } catch (error) {
+        console.error('Gemini API Error:', error);
         return NextResponse.json({
             status: false,
             message: `Failed to fetch transcript data: ${error}`
